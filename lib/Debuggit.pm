@@ -1010,23 +1010,27 @@ but not limited to:
 
 =item *
 
-Barefoot::debug, (c) 2000-2006 Barefoot Software, 2004-2006 ThinkGeek
+C<Barefoot::debug>, (c) 2000-2006 Barefoot Software, 2004-2006 ThinkGeek
 
 =item *
 
-Barefoot::base, (c) 2001-2006 Barefoot Software
+C<Barefoot::base>, (c) 2001-2006 Barefoot Software
 
 =item *
 
-Geek::Dev::Debug, (c) 2004 ThinkGeek
+C<Geek::Dev::Debug>, (c) 2004 ThinkGeek
 
 =item *
 
-VCtools::Base, (c) 1999-2008 Barefoot Software, 2004 ThinkGeek
+C<VCtools::Base>, (c) 2004-2008 Barefoot Software, 2004 ThinkGeek
 
 =item *
 
-Company::Debug, (c) 2008 Rent.com
+C<Barefoot>, (c) 2006-2009 Barefoot Software
+
+=item *
+
+C<Company::Debug>, (c) 2008 Rent.com
 
 =back
 
