@@ -335,6 +335,9 @@ Note that that last example only handles the simple cases--if your debuggit() ca
 eval's or coderef's or anything like that, this breaks down.  But often the simple case is close
 enough.
 
+Functions are handled before the formatter is called (see L</DEBUGGING FUNCTIONS>), so any
+replacement formatter you create doesn't have to worry about those.
+
 The default_formatter() looks I<mostly> like this:
 
     $default_formatter = sub
@@ -386,9 +389,6 @@ A newline is appended to the formatted line.
 
 All these features are demonstrated in the L</SYNOPSIS>.
 
-Note that functions are handled before the formatter is called (see L</DEBUGGING FUNCTIONS>), so any
-replacement formatter you create doesn't have to worry about those.
-
 =cut
 
 #
@@ -434,7 +434,7 @@ other.)
 Note that you don't have to append a newline ($formatter does that).  And finally note that I<not>
 using C<local> sometimes has its advantages: in this case, you might put such code in a common
 header file that all your Perl modules call, and the output will be adjusted for all parts of your
-program, regardless of scope.  (Except don't do that.  See L</POLICY MODULES> for a better way.)
+program, regardless of scope.  (See L</POLICY MODULES> for the best way to accomplish that.)
 
 You could also save to a string:
 
@@ -564,13 +564,14 @@ coderef for the function itself.
 Any time debuggit() finds an argument which exactly matches a function
 name, it removes that argument, and a number of following arguments
 matching the number passed to add_func().  If that number of args exceeds
-debuggit()'s argument list, it will happily fill any gaps with undef values
-without notifying you (or even noticing, for that matter). It then passes
-the total list of arguments removed (I<including> the function name!) to
-the coderef passed to add_func(), calling it in list context.  Finally, it
-takes the list returned from the coderef and inserts it back into
-debuggit()'s argument list at the point at which the arguments were
-removed.  Basically, inside debuggit(), it does the equivalent of this:
+the number remaining in debuggit()'s argument list, it will happily fill
+any gaps with undef values without notifying you (or even noticing, for
+that matter). It then passes the total list of arguments removed
+(I<including> the function name!) to the coderef passed to add_func(),
+calling it in list context.  Finally, it takes the list returned from the
+coderef and inserts it back into debuggit()'s argument list at the point at
+which the arguments were removed.  Basically, inside debuggit(), it does
+the equivalent of this:
 
     $n = $func_name_being_checked_for;
     $i = $point_at_which_func_name_found;
@@ -863,9 +864,9 @@ If you use this style:
 
     debuggit("here I am!") if DEBUG >= 2;
 
-then, assuming DEBUG is set to 0 (but not 1!), it is indeed 100% free.  In
+then, assuming DEBUG is set to 0 (or 1, even), it is indeed 100% free.  In
 fact, the test suite actually uses L<B::Deparse> to insure that the above
-statement produces no actual code when DEBUG == 0, and if you happen to
+statement produces no actual code when C<DEBUG == 0>, and if you happen to
 have L<Gtop> installed (which I believe would mean that you would have to
 happen to be running under Linux), the test suite will also verify that
 C<use Debuggit> does not add anything to your program's memory footprint.
@@ -990,7 +991,6 @@ None that I know of.  However, lacking omniscience, I welcome bug reports.
     CPAN ID: BAREFOOT
     Barefoot Software
     barefootcoder@gmail.com
-    http://www.barefoot.net
 
 =head1 COPYRIGHT
 
