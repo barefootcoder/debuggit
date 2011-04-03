@@ -12,7 +12,7 @@ SYNOPSIS
       $Config->{'DB'} = DEBUG ? 'dev' : 'prod';
 
       # maybe we need to pull our local Perl modules from our VC working copy
-      push @INC, $Config->{'svndir'} if DEBUG;
+      push @INC, $Config->{'vcdir/lib'} if DEBUG;
 
       # basic debugging output
       debuggit("only print this if debugging is on");
@@ -91,16 +91,76 @@ A Note on Version Numbers
     I know it's very fashionable to mark any module you put on CPAN for the
     first time as version 0.000000001, and then take about eight years
     before daring to release a 1.0. However, this module (in earlier
-    incarnations) has been used in production code for 10 years now, so I
-    don't really think it makes much sense to call it 0.01. I've chosen to
+    incarnations) has been used in production code for over 10 years now, so
+    I don't really think it makes much sense to call it 0.01. I've chosen to
     start its CPAN life at 2.01, as this is its 3rd major rewrite. If it
     makes you feel better, just subtract 2 from the version number and
     you'll get a fairly accurate idea of its "true" CPAN version. Just be
     aware that it has had a pretty full life outside CPAN as well.
 
+    The Changes file details this life fairly accurately. The version
+    numbers are assigned using 20/20 hindsight, and I've filled in a few
+    gaps in historical notes, but all the dates and most of the commit
+    messages are fully accurate, and thanks to the wonders of version
+    control I still have every previous version (save one, which is so
+    marked). Not that you care, I'm sure. But it was fun going back through
+    the past ten years of Debuggit's history.
+
 EXPORTS
   DEBUG
-    I need to put some stuff in here.
+    "DEBUG" is a constant (similar to "use constant") which holds your
+    current debugging level. Because it's implemented using constant
+    folding, any conditional based on it will actually be removed during
+    compile-time if the debugging level isn't high enough (or turned off
+    completely). For instance, this code:
+
+            calculate_complex_stuff(1..10_000) if DEBUG >= 2;
+
+    would disappear entirely if "DEBUG" is set to 0, or to 1. Of course,
+    being a constant has its own foibles: you can't interpolate it into
+    double-quoted strings, and you can't put it in front of a fat comma. See
+    constant for full details.
+
+    You "set" "DEBUG" when you use Debuggit:
+
+            use Debuggit(DEBUG => 2);
+
+    Once it's set, you can't change it. You also can't set it from outside
+    the code (like, from an environment variable), but that's a feature I'd
+    consider adding if people thought it was useful.
+
+    If you want your debugging turned off altogether, you can do this:
+
+            use Debuggit(DEBUG => 0);
+
+    Or you can do this:
+
+            use Debuggit;
+
+    But there's a subtle difference between those last two. In your
+    top-level script, there's actually no difference at all. But in a
+    module, not setting "DEBUG" doesn't mean "DEBUG" should be zero; rather
+    it means it should "inherit" the value of "DEBUG" from the top-level
+    script; or, to look at it another way, the value of "DEBUG" from the
+    top-level script "falls through" to whatever modules are included by it.
+
+    The definition of "top-level script" (to Debuggit, anyway) is "first
+    'use Debuggit' statement that is executed by the Perl compiler." Which
+    means you should always put "use Debuggit" before the "use" statements
+    for other modules (or at least other modules of yours).
+
+    So typically what you would do is just put "use Debuggit" at the top of
+    all your code until you're ready to debug. When you hit a problem,
+    change to "use Debuggit(DEBUG => 3)" (or whatever level you feel is
+    appropriate), but *only* in the top-level script. Then you get debugging
+    info from all your modules with one simple change. Or, if you just
+    *know* the problem is in module X, you can enable debugging in that
+    module only. Convenient, right?
+
+    This may not work as well as you'd like if you can't figure out *where*
+    your top-level script actually is (one great example of that is a
+    mod_perl environment). But you can still enable the debugging in each
+    module, so it isn't tragic. Just not as convenient.
 
 FUNCTIONS
   debuggit([level =>] arg[, ...])
@@ -142,6 +202,14 @@ FUNCTIONS
                     charlie
 
     although that seems less useful than the default formatter, in general.
+    Or maybe you don't like how Debuggit provides spaces and newlines for
+    you:
+
+            $Debuggit::formatter = sub { join('', @_) };
+
+    But don't forget that now you've also lost the special handling of
+    "undef" and strings with leading or trailing spaces.
+
     Happily, since $formatter is a variable, you can use "local" to restore
     the previous value at the end of the enclosing block. Better yet, you
     can take advantage of the fact that the default formatter is stored as
@@ -164,11 +232,11 @@ FUNCTIONS
                     return (caller(2))[3] . ': ' . Debuggit::default_formatter(@_);
             };
 
-    Note that this only handles the simple cases. If your debuggit() calls
-    get stuck inside eval's or coderef's or anything like that, this breaks
-    down. But often the simple case is close enough.
+    Note that that last example only handles the simple cases--if your
+    debuggit() calls get stuck inside eval's or coderef's or anything like
+    that, this breaks down. But often the simple case is close enough.
 
-    The default_formatter() looks _mostly_ like this:
+    The default_formatter() looks *mostly* like this:
 
             $default_formatter = sub
             {
@@ -208,7 +276,7 @@ FUNCTIONS
         you to easily see (and hopefully accurately count) any such extra
         spaces.
 
-    *   A newline (technically, $\) is appended to the formatted line.
+    *   A newline is appended to the formatted line.
 
     All these features are demonstrated in the "SYNOPSIS".
 
@@ -244,7 +312,8 @@ FUNCTIONS
     finally note that *not* using "local" sometimes has its advantages: in
     this case, you might put such code in a common header file that all your
     Perl modules call, and the output will be adjusted for all parts of your
-    program, regardless of scope.
+    program, regardless of scope. (Except don't do that. See "POLICY
+    MODULES" for a better way.)
 
     You could also save to a string:
 
@@ -336,7 +405,7 @@ DEBUGGING FUNCTIONS
 
             debuggit("my hash:", DUMP => \%my_hash);
 
-    This is basically exactly the same as:
+    This is basically the same as:
 
             use Data::Dumper;
             debuggit("my hash:", Dumper(\%my_hash));
@@ -345,15 +414,15 @@ DEBUGGING FUNCTIONS
     statement, the DUMP debugging function loads it via a require statement,
     with the happy side-effect that, if debugging is not enabled,
     Data::Dumper is never loaded. Which undoubtedly you don't want it to be
-    in your production code (as it adds somewhere around 500k to your memory
-    footprint).
+    in your production code (as it can add anywhere from 300Kb to nearly 3Mb
+    to your memory footprint).
 
   Debuggit::add_func(FUNC_NAME => #, sub { ... });
     This adds a new debugging function to the table that Debuggit keeps. The
     first argument is the name of the function; if you pass the name of an
     existing function, it is replaced silently. The second argument is the
-    number of arguments that should be passed to the function. The final
-    argument is the coderef for the function itself.
+    number of arguments that the function takes. The final argument is the
+    coderef for the function itself.
 
     Any time debuggit() finds an argument which exactly matches a function
     name, it removes that argument, and a number of following arguments
@@ -391,14 +460,14 @@ DEBUGGING FUNCTIONS
     out that string unless you embed it within another argument. So,
     assuming the default functions are still in place:
 
-            use Debuggit (DEBUG => 2);
-            my $test = {};
-            debuggit(2 => "test is", DUMP => $test);                # calls function, as expected
-            debuggit(2 => "i like to", 'DUMP', "stuff");    # calls function (probably not expected)
-            debuggit(2 => "i like to", 'DUMP ', "stuff");   # doesn't call function, but prints "<<DUMP >>"
-            debuggit(2 => "i like to DUMP stuff");                  # no issues here
-            my $value = 'DUMP';
-            debuggit(2 => "value is", $value, "in foo()");  # calls function(!!!)
+        use Debuggit (DEBUG => 2);
+        my $test = {};
+        debuggit(2 => "test is", DUMP => $test);        # calls function, as expected
+        debuggit(2 => "i like to", 'DUMP', "stuff");    # calls function (possibly not expected)
+        debuggit(2 => "i like to", 'DUMP ', "stuff");   # doesn't call function, but prints "<<DUMP >>"
+        debuggit(2 => "i like to DUMP stuff");          # no issues here
+        my $value = 'DUMP';
+        debuggit(2 => "value is", $value, "in foo()");  # calls function(!!!)
 
     That last one is particularly worrisome, but there's not much to be done
     about it, except to try to choose names for functions that you feel
@@ -570,6 +639,17 @@ STYLE
             debuggit(LOUDER, "this works fine");
             debuggit(LOUDER() => "as does this");
 
+    Or, alternatively, don't use "constant" and use something like
+    Const::Fast instead:
+
+            constant our $QUIET => 1;
+            constant our $SOFTER => 2;
+            constant our $LOUDER => 3;
+            constant our $LITTLE_BIT_LOUDER_NOW => 4;
+            # and so forth
+
+            debuggit($LOUDER => "this one works fine too");
+
     Personally your humble author, while preferring to use constants most of
     the time, doesn't actually use them for debugging levels. Possibly
     because the levels are already abstract representations as opposed to
@@ -610,7 +690,7 @@ PERFORMANCE
     confidence that it will never have any impact on your application. And
     don't forget that Perl still has to process your arguments in order to
     call the empty function: if one of your args to debuggit is a function
-    call, it gets called even when debuggig is off. So, if any of that
+    call, it gets called even when debugging is off. So, if any of that
     worries you, don't do that. Use the first style and then you're covered.
 
     So the short answer is, the second style is more compact and potentially
@@ -633,6 +713,11 @@ COMPARISON
     debugging (debug and trace), while Debuggit provides as many as you
     like. Of course, some may consider that a *dis*advantage, but I mention
     it for completeness.
+
+    Log4perl is also designed to actually *run* in your code even in
+    production mode, whereas Debuggit is designed to disappear after
+    debugging is over. For that reason, you may actually find a use for both
+    alongside each other. Go for it, you crazy kids.
 
     More similar to Debuggit are debug (by the author of the quite excellent
     Moose), Debug, Debug::Message, and Debug::EchoMessage. All these have
@@ -708,7 +793,7 @@ COPYRIGHT
     The full text of the license can be found in the LICENSE file included
     with this module.
 
-    This module is copyright (c) 2008-2010, Barefoot Software. It has many
+    This module is copyright (c) 2008-2011, Barefoot Software. It has many
     venerable ancestors (some more direct than others), including but not
     limited to:
 

@@ -145,7 +145,7 @@ Because it's implemented using constant folding, any conditional based on it wil
 removed during compile-time if the debugging level isn't high enough (or turned off completely).
 For instance, this code:
 
-	calculate_complex_stuff() for 1..10_000 if DEBUG >= 2;
+	calculate_complex_stuff(1..10_000) if DEBUG >= 2;
 
 would disappear entirely if C<DEBUG> is set to 0, or to 1.  Of course, being a constant has its own
 foibles: you can't interpolate it into double-quoted strings, and you can't put it in front of a fat
@@ -176,7 +176,11 @@ The definition of "top-level script" (to Debuggit, anyway) is "first 'use Debugg
 is executed by the Perl compiler."  Which means you should always put C<use Debuggit> before the
 C<use> statements for other modules (or at least other modules of yours).
 
-So typically what you would do is just put C<use Debuggit> at the top of all your code until you're ready to debug.  When you hit a problem, change to C<use Debuggit(DEBUG => 3)> (or whatever level you feel is appropriate), but I<only> in the top-level script.  Then you get debugging info from all your modules with one simple change.  Or, if you just I<know> the problem is in module X, you can enable debugging in that module only.  Convenient, right?
+So typically what you would do is just put C<use Debuggit> at the top of all your code until you're
+ready to debug.  When you hit a problem, change to C<use Debuggit(DEBUG =E<gt> 3)> (or whatever
+level you feel is appropriate), but I<only> in the top-level script.  Then you get debugging info
+from all your modules with one simple change.  Or, if you just I<know> the problem is in module X,
+you can enable debugging in that module only.  Convenient, right?
 
 This may not work as well as you'd like if you can't figure out I<where> your top-level script
 actually is (one great example of that is a mod_perl environment).  But you can still enable the
@@ -376,7 +380,7 @@ accurately count) any such extra spaces.
 
 =item *
 
-A newline (technically, $\) is appended to the formatted line.
+A newline is appended to the formatted line.
 
 =back
 
@@ -430,7 +434,7 @@ other.)
 Note that you don't have to append a newline ($formatter does that).  And finally note that I<not>
 using C<local> sometimes has its advantages: in this case, you might put such code in a common
 header file that all your Perl modules call, and the output will be adjusted for all parts of your
-program, regardless of scope.
+program, regardless of scope.  (Except don't do that.  See L</POLICY MODULES> for a better way.)
 
 You could also save to a string:
 
@@ -537,7 +541,7 @@ you by default:
 
 	debuggit("my hash:", DUMP => \%my_hash);
 
-This is basically exactly the same as:
+This is basically the same as:
 
 	use Data::Dumper;
 	debuggit("my hash:", Dumper(\%my_hash));
@@ -554,8 +558,8 @@ memory footprint).
 This adds a new debugging function to the table that Debuggit keeps.  The
 first argument is the name of the function; if you pass the name of an
 existing function, it is replaced silently.  The second argument is the
-number of arguments that should be passed to the function.  The final
-argument is the coderef for the function itself.
+number of arguments that the function takes.  The final argument is the
+coderef for the function itself.
 
 Any time debuggit() finds an argument which exactly matches a function
 name, it removes that argument, and a number of following arguments
@@ -595,7 +599,7 @@ functions are still in place:
     use Debuggit (DEBUG => 2);
     my $test = {};
     debuggit(2 => "test is", DUMP => $test);        # calls function, as expected
-    debuggit(2 => "i like to", 'DUMP', "stuff");    # calls function (probably not expected)
+    debuggit(2 => "i like to", 'DUMP', "stuff");    # calls function (possibly not expected)
     debuggit(2 => "i like to", 'DUMP ', "stuff");   # doesn't call function, but prints "<<DUMP >>"
     debuggit(2 => "i like to DUMP stuff");          # no issues here
     my $value = 'DUMP';
