@@ -263,7 +263,7 @@ BEGIN
 	$debuggit = q{
 		sub debuggit
 		{
-			return unless $_[0] && ($_[0] =~ /^\d+$/ ? shift : 1) <= DEBUG && @_ > 0;
+			return unless @_ > 0 && ($_[0] =~ /^\d+$/ ? shift : 1) <= DEBUG;
 			$Debuggit::output->($Debuggit::formatter->(Debuggit::_process_funcs(@_)));
 		}
 	};
