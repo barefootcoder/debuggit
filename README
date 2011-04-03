@@ -82,10 +82,11 @@ A Note on Documentation
     Well, I happen to actually *like* writing documentation, so there's a
     healthy chunk of it here. But let me assure you that this is just
     because I'm being thorough, not because this module is complex. It's
-    actually almost ridiculously simple at its core. Start with the "Quick
-    Start" above. After you get bored with how simple Debuggit is to use
-    like that, and want to explore more options, come back and read the
-    rest. Because everything thing else is completely optional.
+    actually almost ridiculously simple at its core. (In fact, about 80% of
+    the module *is* this documentation.) Start with the "Quick Start" above.
+    After you get bored with how simple Debuggit is to use like that, and
+    want to explore more options, come back and read the rest. Because
+    everything thing else is completely optional.
 
 A Note on Version Numbers
     I know it's very fashionable to mark any module you put on CPAN for the

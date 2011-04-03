@@ -101,9 +101,10 @@ too complex ... I mean, just look at how much documentation it takes to describe
 
 Well, I happen to actually I<like> writing documentation, so there's a healthy chunk of it here.
 But let me assure you that this is just because I'm being thorough, not because this module is
-complex.  It's actually almost ridiculously simple at its core.  Start with the L</Quick Start>
-above.  After you get bored with how simple Debuggit is to use like that, and want to explore more
-options, come back and read the rest.  Because everything thing else is completely optional.
+complex.  It's actually almost ridiculously simple at its core.  (In fact, about 80% of the module
+I<is> this documentation.)  Start with the L</Quick Start> above.  After you get bored with how
+simple Debuggit is to use like that, and want to explore more options, come back and read the rest.
+Because everything thing else is completely optional.
 
 =head1 A Note on Version Numbers
 
