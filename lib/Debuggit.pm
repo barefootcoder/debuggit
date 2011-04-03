@@ -58,10 +58,10 @@ Debuggit - A fairly simplistic debug statement handler
 
 =head1 DESCRIPTION
 
-You want sophisticated, full-featured, on-demand debugging, and you don't want
-to take it out when you release the code because you might need it again later,
-but you also don't want it to take up any space or cause any slowdown of your
-production application.  Sounds impossible?  Nah.  Just use Debuggit.
+You want sophisticated, full-featured, on-demand debugging, and you don't want to take it out when
+you release the code because you might need it again later, but you also don't want it to take up
+any space or cause any slowdown of your production application.  Sounds impossible?  Nah.  Just use
+Debuggit.
 
 
 =head1 Quick Start
@@ -377,9 +377,9 @@ string, and avoids unsightly "uninitialized variable" warnings).
 
 =item *
 
-Any value which has leading or trailing spaces (that is, / +/, not /\s+/) has
-'<<' prepended to it and '>>' appended to it.  This allows you to easily see (and hopefully
-accurately count) any such extra spaces.
+Any value which has leading or trailing spaces (that is, / +/, not /\s+/) has '<<' prepended to it
+and '>>' appended to it.  This allows you to easily see (and hopefully accurately count) any such
+extra spaces.
 
 =item *
 
@@ -471,26 +471,23 @@ our $output = sub { print STDERR @_ };
 
 =head1 DEBUGGING FUNCTIONS
 
-When writing debugging statements, you may find yourself doing the same
-operations over and over again.  For instance, imagine that you have a set
-of objects that can belong to one of several subclasses.  Internally, these
-are stored as hashes (as many objects in Perl are), and each hash contains
-a '_data' key whose value is a hash, which itself contains all the
-interesting bits of data for the object.  For debugging purposes, you often
-need to print out the exact type of a given object along with a particular
-data value.  You may find yourself writing something like this over and
-over again:
+When writing debugging statements, you may find yourself doing the same operations over and over
+again.  For instance, imagine that you have a set of objects that can belong to one of several
+subclasses.  Internally, these are stored as hashes (as many objects in Perl are), and each hash
+contains a '_data' key whose value is a hash, which itself contains all the interesting bits of data
+for the object.  For debugging purposes, you often need to print out the exact type of a given
+object along with a particular data value.  You may find yourself writing something like this over
+and over again:
 
     debuggit("after bmoogling", ref($obj) . '->foo =', $obj->{'_data'}->{'foo'});
 
-By the time you've typed that exact pattern 20 or 30 times, you may be
-getting tired of it.  What if you could do something like this instead?
+By the time you've typed that exact pattern 20 or 30 times, you may be getting tired of it.  What if
+you could do something like this instead?
 
     debuggit("after bmoogling", OBJDATA => ($obj, 'foo'));
 
-(Note that the fat comma is not required (see L</STYLE>), nor are the extra
-parends around $obj and 'foo'.  But they make it more obvious what's going
-on here, in your author's humble opinion.)
+(Note that the fat comma is not required (see L</STYLE>), nor are the extra parends around $obj and
+'foo'.  But they make it more obvious what's going on here, in your author's humble opinion.)
 
 If you could do that, that would be much nicer, yes?  Well, you can:
 
@@ -501,20 +498,17 @@ If you could do that, that would be much nicer, yes?  Well, you can:
         return (ref($obj) . "->$data_name =", $obj->{'_data'}->{$data_name});
     });
 
-What that's saying is this:  Any time C<debuggit()> comes across an
-argument consisting of the string 'OBJDATA', it should remove it, plus the
-next 2 arguments, from its argument list; call the coderef given, passing
-it the arguments that were removed; and replace the args it removed with
-the return value of the coderef.  This is called a "debugging function", or
-just "function" for short.
+What that's saying is this:  Any time C<debuggit()> comes across an argument consisting of the
+string 'OBJDATA', it should remove it, plus the next 2 arguments, from its argument list; call the
+coderef given, passing it the arguments that were removed; and replace the args it removed with the
+return value of the coderef.  This is called a "debugging function", or just "function" for short.
 
-Note that this function returns a two-element list, rather than just
-concatenating it all into one big string.  This is so that, if the data
-value happens to be undefined, it will be handled correctly by the
-formatter (see default_formatter(), above).
+Note that this function returns a two-element list, rather than just concatenating it all into one
+big string.  This is so that, if the data value happens to be undefined, it will be handled
+correctly by the formatter (see default_formatter(), above).
 
-A function doesn't have to take any arguments, nor does it have to return
-any.  For instance, you could replace this:
+A function doesn't have to take any arguments, nor does it have to return any.  For instance, you
+could replace this:
 
     debuggit('=' x 40);
     debuggit("new code section starts here");
@@ -531,13 +525,12 @@ by defining your function thus:
         return ();
     });
 
-Many other clever things can be done.  Remember the difference between
-functions and formatters, which is covered above.
+Many other clever things can be done.  Remember the difference between functions and formatters,
+which is covered above.
 
 =head2 Default Functions
 
-At present, there is only one debugging function that Debuggit provides for
-you by default:
+At present, there is only one debugging function that Debuggit provides for you by default:
 
     debuggit("my hash:", DUMP => \%my_hash);
 
@@ -546,32 +539,26 @@ This is basically the same as:
     use Data::Dumper;
     debuggit("my hash:", Dumper(\%my_hash));
 
-with one important exception: instead of loading Data::Dumper via a use
-statement, the DUMP debugging function loads it via a require statement,
-with the happy side-effect that, if debugging is not enabled, Data::Dumper
-is never loaded.  Which undoubtedly you don't want it to be in your
-production code (as it can add anywhere from 300Kb to nearly 3Mb to your
-memory footprint).
+with one important exception: instead of loading Data::Dumper via a use statement, the DUMP
+debugging function loads it via a require statement, with the happy side-effect that, if debugging
+is not enabled, Data::Dumper is never loaded.  Which undoubtedly you don't want it to be in your
+production code (as it can add anywhere from 300Kb to nearly 3Mb to your memory footprint).
 
 =head2 Debuggit::add_func(FUNC_NAME => #, sub { ... });
 
-This adds a new debugging function to the table that Debuggit keeps.  The
-first argument is the name of the function; if you pass the name of an
-existing function, it is replaced silently.  The second argument is the
-number of arguments that the function takes.  The final argument is the
-coderef for the function itself.
+This adds a new debugging function to the table that Debuggit keeps.  The first argument is the name
+of the function; if you pass the name of an existing function, it is replaced silently.  The second
+argument is the number of arguments that the function takes.  The final argument is the coderef for
+the function itself.
 
-Any time debuggit() finds an argument which exactly matches a function
-name, it removes that argument, and a number of following arguments
-matching the number passed to add_func().  If that number of args exceeds
-the number remaining in debuggit()'s argument list, it will happily fill
-any gaps with undef values without notifying you (or even noticing, for
-that matter). It then passes the total list of arguments removed
-(I<including> the function name!) to the coderef passed to add_func(),
-calling it in list context.  Finally, it takes the list returned from the
-coderef and inserts it back into debuggit()'s argument list at the point at
-which the arguments were removed.  Basically, inside debuggit(), it does
-the equivalent of this:
+Any time debuggit() finds an argument which exactly matches a function name, it removes that
+argument, and a number of following arguments matching the number passed to add_func().  If that
+number of args exceeds the number remaining in debuggit()'s argument list, it will happily fill any
+gaps with undef values without notifying you (or even noticing, for that matter). It then passes the
+total list of arguments removed (I<including> the function name!) to the coderef passed to
+add_func(), calling it in list context.  Finally, it takes the list returned from the coderef and
+inserts it back into debuggit()'s argument list at the point at which the arguments were removed.
+Basically, inside debuggit(), it does the equivalent of this:
 
     $n = $func_name_being_checked_for;
     $i = $point_at_which_func_name_found;
@@ -579,8 +566,7 @@ the equivalent of this:
 
 except hopefully more efficiently.
 
-The name of the function is passed in so that you can do excessively clever
-things such as:
+The name of the function is passed in so that you can do excessively clever things such as:
 
     my $print_config = sub
     {
@@ -589,13 +575,11 @@ things such as:
     };
     Debuggit::add_func($_ => 1, $print_config) foreach qw< FOO BAR BAZ BMOOGLE >;
 
-But do remember that excessive cleverness often leads to nightmarish
-maintenance, so caveat codor.
+But do remember that excessive cleverness often leads to nightmarish maintenance, so caveat codor.
 
-Since debuggit() is just doing a simple string comparison on its arguments
-to find functions, this means that you can't actually print out that string
-unless you embed it within another argument.  So, assuming the default
-functions are still in place:
+Since debuggit() is just doing a simple string comparison on its arguments to find functions, this
+means that you can't actually print out that string unless you embed it within another argument.
+So, assuming the default functions are still in place:
 
     use Debuggit (DEBUG => 2);
     my $test = {};
@@ -606,17 +590,16 @@ functions are still in place:
     my $value = 'DUMP';
     debuggit(2 => "value is", $value, "in foo()");  # calls function(!!!)
 
-That last one is particularly worrisome, but there's not much to be done
-about it, except to try to choose names for functions that you feel
-confident aren't going to show up as arguments to debuggit(), or else don't
-use debugging functions at all.  Personally I find that as long as I use
-all caps for function names, and implement only the most necessary
-functions, it really isn't a problem.
+That last one is particularly worrisome, but there's not much to be done about it, except to try to
+choose names for functions that you feel confident aren't going to show up as arguments to
+debuggit(), or else don't use debugging functions at all.  Personally I find that as long as I use
+all caps for function names, and implement only the most necessary functions, it really isn't a
+problem.
 
 =head2 Debuggit::remove_func('FUNC_NAME');
 
-This just removes the given debugging function.  Default functions are not
-special in any way, so those can be removed just as others can:
+This just removes the given debugging function.  Default functions are not special in any way, so
+those can be removed just as others can:
 
     Debuggit::remove_func('DUMP');
 
@@ -690,10 +673,9 @@ sub _process_funcs
 
 =head1 POLICY MODULES
 
-So, let's say you've started using some of Debuggit's more advanced
-features, such as setting formatters, or adding debugging functions, except
-that now you're putting the same lines of code at the top of every one of
-your Perl modules:
+So, let's say you've started using some of Debuggit's more advanced features, such as setting
+formatters, or adding debugging functions, except that now you're putting the same lines of code at
+the top of every one of your Perl modules:
 
     use Debuggit;
     $Debuggit::formatter = sub { return scalar(localtime) . ': ' . Debuggit::default_formatter(@_) };
@@ -718,9 +700,9 @@ Okay, try this:
         Debuggit->import(PolicyModule => 1, @_);
     }
 
-The 'PolicyModule' argument to Debuggit::import() just tells it to install
-DEBUG and debuggit() one level higher than usual, so that your caller (not
-you) gets all that debuggity goodness.  Now you can just:
+The 'PolicyModule' argument to Debuggit::import() just tells it to install DEBUG and debuggit() one
+level higher than usual, so that your caller (not you) gets all that debuggity goodness.  Now you
+can just:
 
     use MyDebuggit;
 
@@ -732,26 +714,24 @@ and you're all set.
 
 =head1 STYLE
 
-This is a pretty simple module, but there are still a couple of different ways
-to do things.  Here are my personal thoughts as to the pluses and minuses of the
-following alternative styles.  You, of course, may feel free to disagree: that's
-what keeps the world a wonderful place.
+This is a pretty simple module, but there are still a couple of different ways to do things.  Here
+are my personal thoughts as to the pluses and minuses of the following alternative styles.  You, of
+course, may feel free to disagree: that's what keeps the world a wonderful place.
 
 First, there's the difference between these two:
 
     debuggit("here I am!") if DEBUG >= 2;
     debuggit(2 => "here I am!");
 
-Personally I prefer #2, but please see important information below under
-L</PERFORMANCE>.  Functionally, they are the same ... when debugging is on.
-However, here's an interesting thing that tripped me up recently:
+Personally I prefer #2, but please see important information below under L</PERFORMANCE>.
+Functionally, they are the same ... when debugging is on.  However, here's an interesting thing that
+tripped me up recently:
 
     debuggit(4 => "row is", join(':', @$row));
 
-As you might guess from the names, this was in a tight loop that processed
-each row coming back from a database.  What I hadn't considered was that,
-even when debugging was totally off, it was still doing that join() call
-for every row of data, then passing the results to an empty function.  In
+As you might guess from the names, this was in a tight loop that processed each row coming back from
+a database.  What I hadn't considered was that, even when debugging was totally off, it was still
+doing that join() call for every row of data, then passing the results to an empty function.  In
 this case, the equivalent:
 
     debuggit("row is", join(':', @$row)) if DEBUG >= 4;
@@ -763,64 +743,59 @@ Assuming you went with #2 above, you then have to decide between these two:
     debuggit(2 => "here I am!");
     debuggit(2, "here I am!");
 
-I strongly recommend the first one.  To me, #2 just looks like it will print "2
-here I am!", which it won't.  #1 is using the fat comma to offset the debugging
-level from the debugging arguments, and that seems to me to be a Good Thing(tm).
+I strongly recommend the first one.  To me, #2 just looks like it will print "2 here I am!", which
+it won't.  #1 is using the fat comma to offset the debugging level from the debugging arguments, and
+that seems to me to be a Good Thing(tm).
 
 How about a similar choice for functions?
 
     debuggit("here's my big structure", DUMP => $struct);
     debuggit("here's my big structure", 'DUMP', $struct);
 
-My objections to #2 are the same: it looks like "DUMP" is part of the
-debugging output, and it isn't.  For me, the fat comma in a C<debuggit> arg list
-is basically an indication that whatever precedes it is not something to be
-printed, but rather some message to C<debuggit> itself to do something special.
+My objections to #2 are the same: it looks like "DUMP" is part of the debugging output, and it
+isn't.  For me, the fat comma in a C<debuggit> arg list is basically an indication that whatever
+precedes it is not something to be printed, but rather some message to C<debuggit> itself to do
+something special.
 
-On the other hand, don't fall into the trap of thinking that every time you
-use a fat comma debuggit() is going to know that you don't want to print the
-thing that precedes it.  For instance, this:
+On the other hand, don't fall into the trap of thinking that every time you use a fat comma
+debuggit() is going to know that you don't want to print the thing that precedes it.  For instance,
+this:
 
     debuggit("this is not a func", hey => "even though it looks like one");
     # unless you defined a func named 'hey', of course
     # but don't do that; you should use all caps for func names
 
-Remember, the fat comma is still just a comma; debuggit() has no way to tell
-from its argument list whether you used a fat comma or not.  Use => as a sign
-to your I<readers> that you're using a debugging level or a debugging function,
-not as a sign to debuggit() itself.
+Remember, the fat comma is still just a comma; debuggit() has no way to tell from its argument list
+whether you used a fat comma or not.  Use => as a sign to your I<readers> that you're using a
+debugging level or a debugging function, not as a sign to debuggit() itself.
 
-The last thing you have to decide is how to define your "levels" of debugging.
-You don't have to, of course.  You can just have one level, effectively, and
-have your debugging be either on or off.  But you will probably find that it's
-convenient to gradually crank up the debugging level when you're trying to find
-that elusive problem.  The lower level that you can set it to, the less
+The last thing you have to decide is how to define your "levels" of debugging.  You don't have to,
+of course.  You can just have one level, effectively, and have your debugging be either on or off.
+But you will probably find that it's convenient to gradually crank up the debugging level when
+you're trying to find that elusive problem.  The lower level that you can set it to, the less
 debugging crap you have to wade through to find what you're looking for.
 
-So it makes sense to have various levels of debugging, and it makes sense to
-have them make sense.  Decide on what's best for your project (which may just be
-what's best for you, or might involve coming to a concensus with your coworkers)
-and publish that in a comment somewhere so everyone has the same expectations.
-And then be consistent.
+So it makes sense to have various levels of debugging, and it makes sense to have them make sense.
+Decide on what's best for your project (which may just be what's best for you, or might involve
+coming to a concensus with your coworkers) and publish that in a comment somewhere so everyone has
+the same expectations.  And then be consistent.
 
-How many levels should you use?  Well, the quite excellent Log::Log4perl has 6,
-and they're named instead of numbered, so that you know what to use each level
-for.  It also contains this very curious statement:
+How many levels should you use?  Well, the quite excellent Log::Log4perl has 6, and they're named
+instead of numbered, so that you know what to use each level for.  It also contains this very
+curious statement:
 
     Neither does anyone need more logging levels than these predefined ones.
     If you think you do, I would suggest you look into steering your logging
     behaviour via the category mechanism.
 
-No offense to Log4perl's author, but I always found this statement to be a bit
-... well, snooty, to put it mildly.  My personal view is, who am I to say how
-many levels you need? or what you want to use them for?  Consequently, I have
-given you the range of positive integers to play with, and you can assign
-whatever meanings you like to them.  But with great power comes great
-responsibility, and if you don't define what your levels are I<somewhere> in
-your code, those who come after you will inevitably curse your name.
+No offense to Log4perl's author, but I always found this statement to be a bit ... well, snooty, to
+put it mildly.  My personal view is, who am I to say how many levels you need? or what you want to
+use them for?  Consequently, I have given you the range of positive integers to play with, and you
+can assign whatever meanings you like to them.  But with great power comes great responsibility, and
+if you don't define what your levels are I<somewhere> in your code, those who come after you will
+inevitably curse your name.
 
-One last caution:  You may want to define constants for your debugging levels,
-like so:
+One last caution:  You may want to define constants for your debugging levels, like so:
 
     use constant QUIET => 1;
     use constant SOFTER => 2;
@@ -832,16 +807,14 @@ And then you may think you're going to use them like so:
 
     debuggit(LOUDER => "this is not going to print what you think");
 
-(Unless you think it's going to print "LOUDER this is not going to print what
-you think", in which case you'd be absolutely right.)  Remember that the fat
-comma autoquotes whatever comes before it, which deconstantifies your identifier
-there.  You'll have to settle on one of these:
+(Unless you think it's going to print "LOUDER this is not going to print what you think", in which
+case you'd be absolutely right.)  Remember that the fat comma autoquotes whatever comes before it,
+which deconstantifies your identifier there.  You'll have to settle on one of these:
 
     debuggit(LOUDER, "this works fine");
     debuggit(LOUDER() => "as does this");
 
-Or, alternatively, don't use C<constant> and use something like L<Const::Fast>
-instead:
+Or, alternatively, don't use C<constant> and use something like L<Const::Fast> instead:
 
     constant our $QUIET => 1;
     constant our $SOFTER => 2;
@@ -851,9 +824,9 @@ instead:
 
     debuggit($LOUDER => "this one works fine too");
 
-Personally your humble author, while preferring to use constants most of the
-time, doesn't actually use them for debugging levels.  Possibly because the
-levels are already abstract representations as opposed to actual numbers.
+Personally your humble author, while preferring to use constants most of the time, doesn't actually
+use them for debugging levels.  Possibly because the levels are already abstract representations as
+opposed to actual numbers.
 
 
 =head1 PERFORMANCE
@@ -864,41 +837,35 @@ If you use this style:
 
     debuggit("here I am!") if DEBUG >= 2;
 
-then, assuming DEBUG is set to 0 (or 1, even), it is indeed 100% free.  In
-fact, the test suite actually uses L<B::Deparse> to insure that the above
-statement produces no actual code when C<DEBUG == 0>, and if you happen to
-have L<Gtop> installed (which I believe would mean that you would have to
-happen to be running under Linux), the test suite will also verify that
-C<use Debuggit> does not add anything to your program's memory footprint.
+then, assuming DEBUG is set to 0 (or 1, even), it is indeed 100% free.  In fact, the test suite
+actually uses L<B::Deparse> to insure that the above statement produces no actual code when C<DEBUG
+== 0>, and if you happen to have L<Gtop> installed (which I believe would mean that you would have
+to happen to be running under Linux), the test suite will also verify that C<use Debuggit> does not
+add anything to your program's memory footprint.
 
 This style, however:
 
     debuggit(2 => "here I am!");
 
-is slightly more problematic.  Unfortunately, without using a source filter
-(which is a possibility for a future version, although it would be strictly
-optional), there just isn't any way that I can see to eliminate that call.
-(Unless maybe it could be done with something like C<optimizer> or
-C<Devel::Declare>, but I fear that may be beyond my meager Perl hacking
-ability ... patches welcome!)
+is slightly more problematic.  Unfortunately, without using a source filter (which is a possibility
+for a future version, although it would be strictly optional), there just isn't any way that I can
+see to eliminate that call.  (Unless maybe it could be done with something like C<optimizer> or
+C<Devel::Declare>, but I fear that may be beyond my meager Perl hacking ability ... patches
+welcome!)
 
-So if you prefer that second style (as does your humble author), then what
-you end up with is a guarantee that your C<debuggit> calls will resolve to
-calls to empty functions, which take a very small (but positive) amount of
-time.  Probably you will never notice them, as whatever actual work you are
-doing will certainly overwhelm any time spent on calling empty functions,
-but I definitely can't state with confidence that it will never have B<any>
-impact on your application.  And don't forget that Perl still has to
-process your arguments in order to call the empty function: if one of your
-args to debuggit is a function call, it gets called even when debugging is
-off.  So, if any of that worries you, don't do that.  Use the first style
-and then you're covered.
+So if you prefer that second style (as does your humble author), then what you end up with is a
+guarantee that your C<debuggit> calls will resolve to calls to empty functions, which take a very
+small (but positive) amount of time.  Probably you will never notice them, as whatever actual work
+you are doing will certainly overwhelm any time spent on calling empty functions, but I definitely
+can't state with confidence that it will never have B<any> impact on your application.  And don't
+forget that Perl still has to process your arguments in order to call the empty function: if one of
+your args to debuggit is a function call, it gets called even when debugging is off.  So, if any of
+that worries you, don't do that.  Use the first style and then you're covered.
 
-So the short answer is, the second style is more compact and potentially more
-legible.  But the first style is safer in terms of minimizing performance
-impact.  However, I do hope that one day I can update this module with further
-options which can make the second style just as efficient.  Hopefully this gives
-you the information you need to choose what's right for you.
+So the short answer is, the second style is more compact and potentially more legible.  But the
+first style is safer in terms of minimizing performance impact.  However, I do hope that one day I
+can update this module with further options which can make the second style just as efficient.
+Hopefully this gives you the information you need to choose what's right for you.
 
 
 
@@ -906,33 +873,28 @@ you the information you need to choose what's right for you.
 
 How does B<Debuggit> compare with similar modules?
 
-Probably its most well-known competitor would be L<Log::Log4perl>.  However,
-Log4perl is really a full-featured logger, which handles errors, warnings, and
-much much more ... debugging is only a small part of what Log4perl does.  If you
-I<need> Log4perl, you may well want to stick with that and ignore B<Debuggit>.
-Debuggit is mainly for when you need much less than what Log4perl provides.
-That having been said, one advantage of Debuggit over Log4perl is that Log4perl
-provides only 2 levels of debugging (debug and trace), while Debuggit provides
-as many as you like.  Of course, some may consider that a I<dis>advantage, but I
-mention it for completeness.
+Probably its most well-known competitor would be L<Log::Log4perl>.  However, Log4perl is really a
+full-featured logger, which handles errors, warnings, and much much more ... debugging is only a
+small part of what Log4perl does.  If you I<need> Log4perl, you may well want to stick with that and
+ignore B<Debuggit>.  Debuggit is mainly for when you need much less than what Log4perl provides.
+That having been said, one advantage of Debuggit over Log4perl is that Log4perl provides only 2
+levels of debugging (debug and trace), while Debuggit provides as many as you like.  Of course, some
+may consider that a I<dis>advantage, but I mention it for completeness.
 
-Log4perl is also designed to actually I<run> in your code even in
-production mode, whereas Debuggit is designed to disappear after debugging
-is over.  For that reason, you may actually find a use for both alongside
-each other.  Go for it, you crazy kids.
+Log4perl is also designed to actually I<run> in your code even in production mode, whereas Debuggit
+is designed to disappear after debugging is over.  For that reason, you may actually find a use for
+both alongside each other.  Go for it, you crazy kids.
 
-More similar to B<Debuggit> are L<debug> (by the author of the quite excellent
-L<Moose>), L<Debug>, L<Debug::Message>, and L<Debug::EchoMessage>.  All these
-have similar features to Debuggit, but none have as many.  To be fair, some have
-features that Debuggit doesn't.  I've put together a comparison matrix for you,
-but please remember that this is based on my reading of the documentation for
-these modules.  I have neither used any of them nor looked at their source
-code extensively, so my comparison could be incomplete.
+More similar to B<Debuggit> are L<debug> (by the author of the quite excellent L<Moose>), L<Debug>,
+L<Debug::Message>, and L<Debug::EchoMessage>.  All these have similar features to Debuggit, but none
+have as many.  To be fair, some have features that Debuggit doesn't.  I've put together a comparison
+matrix for you, but please remember that this is based on my reading of the documentation for these
+modules.  I have neither used any of them nor looked at their source code extensively, so my
+comparison could be incomplete.
 
-I've included a few other debugging modules that I ran across as well.  Several
-of these latter modules are designed to be used as part of a larger
-distribution, but I<could> be used separately, and offer similar functionality
-to B<Debuggit>, so I threw them in there.  What the heck.
+I've included a few other debugging modules that I ran across as well.  Several of these latter
+modules are designed to be used as part of a larger distribution, but I<could> be used separately,
+and offer similar functionality to B<Debuggit>, so I threw them in there.  What the heck.
 
     d   == debug
     D   == Debug
@@ -969,9 +931,9 @@ to B<Debuggit>, so I threw them in there.  What the heck.
       arbitrary control by package variable    |          |   |   |    |     |  X  |     |    |    |     |
     -------------------------------------------+----------+---+---+----+-----+-----+-----+----+----+-----+
 
-There are, of course, additional considerations in terms of coding style, which
-may or may not be important to you.  Also, at least one (Blosxom::Debug) uses
-source filtering, which you may or may not object to.
+There are, of course, additional considerations in terms of coding style, which may or may not be
+important to you.  Also, at least one (Blosxom::Debug) uses source filtering, which you may or may
+not object to.
 
 
 
@@ -998,13 +960,11 @@ This program is free software licensed under
 
     The Artistic License
 
-The full text of the license can be found in the
-LICENSE file included with this module.
+The full text of the license can be found in the LICENSE file included with this module.
 
 
-This module is copyright (c) 2008-2011, Barefoot Software.
-It has many venerable ancestors (some more direct than others), including
-but not limited to:
+This module is copyright (c) 2008-2011, Barefoot Software.  It has many venerable ancestors (some
+more direct than others), including but not limited to:
 
 =over
 
