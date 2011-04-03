@@ -115,6 +115,12 @@ its 3rd major rewrite.  If it makes you feel better, just subtract 2 from the ve
 you'll get a fairly accurate idea of its "true" CPAN version.  Just be aware that it has had a
 pretty full life outside CPAN as well.
 
+The Changes file details this life fairly accurately.  The version numbers are assigned using 20/20
+hindsight, and I've filled in a few gaps in historical notes, but all the dates and most of the
+commit messages are fully accurate, and thanks to the wonders of version control I still have every
+previous version (save one, which is so marked).  Not that you care, I'm sure.  But it was fun going
+back through the past ten years of Debuggit's history.
+
 =cut
 
 #
