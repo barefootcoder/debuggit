@@ -3,7 +3,7 @@ package Debuggit;
 use strict;
 use warnings;
 
-our $VERSION = '2.01';
+our $VERSION = '2.00_01';
 
 
 #################### main pod documentation begin ###################
@@ -39,9 +39,9 @@ Debuggit - A fairly simplistic debug statement handler
   my $var2;
   my $var3 = " leading and trailing spaces   ";
   # assuming debugging is enabled ...
-  debuggit("var1 is", $var1);	# var1 is 6
-  debuggit("var2 is", $var2);	# var2 is <<undef>>
-  debuggit("var3 is", $var3);	# var3 is << leading and trailing spaces   >>
+  debuggit("var1 is", $var1);   # var1 is 6
+  debuggit("var2 is", $var2);   # var2 is <<undef>>
+  debuggit("var3 is", $var3);   # var3 is << leading and trailing spaces   >>
   # note that spaces between args, as well as final newlines, are provided automatically
 
   # use "functions" in the debugging args list
@@ -53,7 +53,7 @@ Debuggit - A fairly simplistic debug statement handler
   # make your own function
   Debuggit::add_func(CONFIG => 1, sub { my ($self, $var) = $_; return "$self var $var is $Config->{$var}" });
   # and use it like so
-  debuggit(CONFIG => 'DB');		# CONFIG var DB is dev
+  debuggit(CONFIG => 'DB');     # CONFIG var DB is dev
 
 
 =head1 DESCRIPTION
@@ -68,27 +68,27 @@ production application.  Sounds impossible?  Nah.  Just use Debuggit.
 
 To start:
 
-	use strict;
-	use warnings;
+    use strict;
+    use warnings;
 
-	use Debuggit;
+    use Debuggit;
 
 
-	my $var = 6;
-	debuggit(2 => "var is", $var);		# this does not print
-	debuggit(4 => "var is", $var);		# neither does this
+    my $var = 6;
+    debuggit(2 => "var is", $var);      # this does not print
+    debuggit(4 => "var is", $var);      # neither does this
 
 Later ...
 
-	use strict;
-	use warnings;
+    use strict;
+    use warnings;
 
-	use Debuggit(DEBUG => 2);
+    use Debuggit(DEBUG => 2);
 
 
-	my $var = 6;
-	debuggit(2 => "var is", $var);		# now this prints
-	debuggit(4 => "var is", $var);		# but this still doesn't
+    my $var = 6;
+    debuggit(2 => "var is", $var);      # now this prints
+    debuggit(4 => "var is", $var);      # but this still doesn't
 
 That's it.  Really.  Everything else is just gravy.
 
@@ -145,7 +145,7 @@ Because it's implemented using constant folding, any conditional based on it wil
 removed during compile-time if the debugging level isn't high enough (or turned off completely).
 For instance, this code:
 
-	calculate_complex_stuff(1..10_000) if DEBUG >= 2;
+    calculate_complex_stuff(1..10_000) if DEBUG >= 2;
 
 would disappear entirely if C<DEBUG> is set to 0, or to 1.  Of course, being a constant has its own
 foibles: you can't interpolate it into double-quoted strings, and you can't put it in front of a fat
@@ -153,18 +153,18 @@ comma.  See L<constant> for full details.
 
 You "set" C<DEBUG> when you use Debuggit:
 
-	use Debuggit(DEBUG => 2);
+    use Debuggit(DEBUG => 2);
 
 Once it's set, you can't change it.  You also can't set it from outside the code (like, from an
 environment variable), but that's a feature I'd consider adding if people thought it was useful.
 
 If you want your debugging turned off altogether, you can do this:
 
-	use Debuggit(DEBUG => 0);
+    use Debuggit(DEBUG => 0);
 
 Or you can do this:
 
-	use Debuggit;
+    use Debuggit;
 
 But there's a subtle difference between those last two.  In your top-level script, there's actually
 no difference at all.  But in a module, not setting C<DEBUG> doesn't mean C<DEBUG> should be zero;
@@ -195,37 +195,37 @@ debugging in each module, so it isn't tragic.  Just not as convenient.
 
 sub import
 {
-	my ($pkg, %opts) = @_;
-	my $caller_package = $opts{PolicyModule} ? caller(1) : caller;
+    my ($pkg, %opts) = @_;
+    my $caller_package = $opts{PolicyModule} ? caller(1) : caller;
 
-	my $master_debug = eval "Debuggit::DEBUG();";
-	my $debug_value = defined $opts{DEBUG} ? $opts{DEBUG} : defined $master_debug ? $master_debug : 0;
-	eval "sub Debuggit::DEBUG () { return $debug_value; }" unless defined $master_debug;
+    my $master_debug = eval "Debuggit::DEBUG();";
+    my $debug_value = defined $opts{DEBUG} ? $opts{DEBUG} : defined $master_debug ? $master_debug : 0;
+    eval "sub Debuggit::DEBUG () { return $debug_value; }" unless defined $master_debug;
 
-	my $caller_defined = defined eval "${caller_package}::DEBUG();";
-	eval "sub ${caller_package}::DEBUG () { $debug_value }" unless $caller_defined;
+    my $caller_defined = defined eval "${caller_package}::DEBUG();";
+    eval "sub ${caller_package}::DEBUG () { $debug_value }" unless $caller_defined;
 
-	if ($debug_value)
-	{
-		my $d = $debuggit;
-		$d =~ s/debuggit/${caller_package}::debuggit/;
-		eval $d;
+    if ($debug_value)
+    {
+        my $d = $debuggit;
+        $d =~ s/debuggit/${caller_package}::debuggit/;
+        eval $d;
 
-		eval $add_func unless Debuggit->can('add_func');
+        eval $add_func unless Debuggit->can('add_func');
 
-		# create default function
-		add_func(DUMP => 1, sub
-		{
-			require Data::Dumper;
-			shift;
-			return Data::Dumper::Dumper(shift);
-		});
-	}
-	else
-	{
-		eval "sub ${caller_package}::debuggit {}";
-		*add_func = sub {};
-	}
+        # create default function
+        add_func(DUMP => 1, sub
+        {
+            require Data::Dumper;
+            shift;
+            return Data::Dumper::Dumper(shift);
+        });
+    }
+    else
+    {
+        eval "sub ${caller_package}::debuggit {}";
+        *add_func = sub {};
+    }
 }
 
 
@@ -248,16 +248,16 @@ a function, but you know what I mean).  When DEBUG is set to 0, you are guarante
 is an empty function.  When DEBUG is non-zero, you are guaranteed that C<debuggit> will do the
 equivalent of this:
 
-	sub debuggit
-	{
-		my $level = $_[0] =~ /^\d+$/ ? shift : 1;
-		if (DEBUG >= $level)
-		{
-			@_ = process_funcs(@_);
-			my $msg = $formatter->(@_);
-			$output->($msg);
-		}
-	}
+    sub debuggit
+    {
+        my $level = $_[0] =~ /^\d+$/ ? shift : 1;
+        if (DEBUG >= $level)
+        {
+            @_ = process_funcs(@_);
+            my $msg = $formatter->(@_);
+            $output->($msg);
+        }
+    }
 
 meaning that you can override both $formatter and $output, and you can add to or subtract from the
 functions handled by process_funcs().
@@ -270,13 +270,13 @@ functions handled by process_funcs().
 
 BEGIN
 {
-	$debuggit = q{
-		sub debuggit
-		{
-			return unless @_ > 0 && ($_[0] =~ /^\d+$/ ? shift : 1) <= DEBUG;
-			$Debuggit::output->($Debuggit::formatter->(Debuggit::_process_funcs(@_)));
-		}
-	};
+    $debuggit = q{
+        sub debuggit
+        {
+            return unless @_ > 0 && ($_[0] =~ /^\d+$/ ? shift : 1) <= DEBUG;
+            $Debuggit::output->($Debuggit::formatter->(Debuggit::_process_funcs(@_)));
+        }
+    };
 }
 
 
@@ -289,23 +289,23 @@ BEGIN
 The $formatter variable allows you to override Debuggit's internal format function (see above).  For
 instance, something like this:
 
-	$Debuggit::formatter = sub { shift . "\n" . join('', map { "\t$_\n" } @_) };
+    $Debuggit::formatter = sub { shift . "\n" . join('', map { "\t$_\n" } @_) };
 
-	my @list = qw< fred sue joe charlie >;
-	debuggit("Names:", @list);
+    my @list = qw< fred sue joe charlie >;
+    debuggit("Names:", @list);
 
 outputs something like this:
 
-	Names:
-		fred
-		sue
-		joe
-		charlie
+    Names:
+        fred
+        sue
+        joe
+        charlie
 
 although that seems less useful than the default formatter, in general. Or maybe you don't like how
 Debuggit provides spaces and newlines for you:
 
-	$Debuggit::formatter = sub { join('', @_) };
+    $Debuggit::formatter = sub { join('', @_) };
 
 But don't forget that now you've also lost the special handling of C<undef> and strings with leading
 or trailing spaces.
@@ -314,22 +314,22 @@ Happily, since C<$formatter> is a variable, you can use C<local> to restore the 
 the end of the enclosing block.  Better yet, you can take advantage of the fact that the default
 formatter is stored as Debuggit::default_formatter() to do clever things like this:
 
-	# add timestamp to debugging (at least for this function/module/whatever)
-	local $Debuggit::formatter = sub
-	{
-		return scalar(localtime) . ': ' . Debuggit::default_formatter(@_);
-	};
+    # add timestamp to debugging (at least for this function/module/whatever)
+    local $Debuggit::formatter = sub
+    {
+        return scalar(localtime) . ': ' . Debuggit::default_formatter(@_);
+    };
 
 or even this:
 
-	# all debugging statements in the current context will show function name
-	local $Debuggit::formatter = sub
-	{
-		# note that caller(0) would be this formatter sub, and
-		# caller(1) would be debuggit(), so caller(2) is what we want
-		# element 3 is the subroutine name (which includes the package name)
-		return (caller(2))[3] . ': ' . Debuggit::default_formatter(@_);
-	};
+    # all debugging statements in the current context will show function name
+    local $Debuggit::formatter = sub
+    {
+        # note that caller(0) would be this formatter sub, and
+        # caller(1) would be debuggit(), so caller(2) is what we want
+        # element 3 is the subroutine name (which includes the package name)
+        return (caller(2))[3] . ': ' . Debuggit::default_formatter(@_);
+    };
 
 Note that that last example only handles the simple cases--if your debuggit() calls get stuck inside
 eval's or coderef's or anything like that, this breaks down.  But often the simple case is close
@@ -337,10 +337,10 @@ enough.
 
 The default_formatter() looks I<mostly> like this:
 
-	$default_formatter = sub
-	{
-		return join(' ', map { defined $_ ? $_ : '<<undef>>' } @_) . "\n";
-	};
+    $default_formatter = sub
+    {
+        return join(' ', map { defined $_ ? $_ : '<<undef>>' } @_) . "\n";
+    };
 
 but see below for full details.
 
@@ -397,7 +397,7 @@ replacement formatter you create doesn't have to worry about those.
 
 sub default_formatter
 {
-	return join(' ', map { !defined $_ ? '<<undef>>' : /^ +/ || / +$/ ? "<<$_>>" : $_ } @_) . "\n";
+    return join(' ', map { !defined $_ ? '<<undef>>' : /^ +/ || / +$/ ? "<<$_>>" : $_ } @_) . "\n";
 }
 
 our $formatter = \&default_formatter;
@@ -412,7 +412,7 @@ our $formatter = \&default_formatter;
 The $output variable allows you to override Debuggit's internal output function (see debuggit()).
 For instance, something like this:
 
-	local $Debuggit::output = sub { print @_ };
+    local $Debuggit::output = sub { print @_ };
 
 allows you to print debugging messages to stdout rather than stderr (although I'm not sure why you'd
 want to).  Like with $formatter, the use of C<local> allows you to change the output function
@@ -420,13 +420,13 @@ temporarily (i.e.  until the end of the enclosing block).
 
 Perhaps you want a log file:
 
-	my $log = '/tmp/debug.log';
-	$Debuggit::output = sub
-	{
-		open(LOG, ">>$log") or return;
-		print LOG @_;
-		close(LOG);
-	};
+    my $log = '/tmp/debug.log';
+    $Debuggit::output = sub
+    {
+        open(LOG, ">>$log") or return;
+        print LOG @_;
+        close(LOG);
+    };
 
 (Notice how you have to append to the file, else multiple debuggit() calls will just overwrite each
 other.)
@@ -438,8 +438,8 @@ program, regardless of scope.  (Except don't do that.  See L</POLICY MODULES> fo
 
 You could also save to a string:
 
-	our $log_msg;
-	local $Debuggit::output = sub { $log_msg .= join('', @_) };
+    our $log_msg;
+    local $Debuggit::output = sub { $log_msg .= join('', @_) };
 
 Again, we're appending.  We join all the args together (although most formatters will return only
 one value, probably best not to assume), but use no separator.  Also note the use of C<our>; you
@@ -447,11 +447,11 @@ probably want that rather than a C<my> variable.
 
 The default output function is merely:
 
-	sub { print STDERR @_ };
+    sub { print STDERR @_ };
 
 Note that this is subtly different from:
 
-	sub { warn @_ };
+    sub { warn @_ };
 
 in the presence of C<$SIG{__WARN__}> handlers and/or mod_perl.
 
@@ -481,12 +481,12 @@ need to print out the exact type of a given object along with a particular
 data value.  You may find yourself writing something like this over and
 over again:
 
-	debuggit("after bmoogling", ref($obj) . '->foo =', $obj->{'_data'}->{'foo'});
+    debuggit("after bmoogling", ref($obj) . '->foo =', $obj->{'_data'}->{'foo'});
 
 By the time you've typed that exact pattern 20 or 30 times, you may be
 getting tired of it.  What if you could do something like this instead?
 
-	debuggit("after bmoogling", OBJDATA => ($obj, 'foo'));
+    debuggit("after bmoogling", OBJDATA => ($obj, 'foo'));
 
 (Note that the fat comma is not required (see L</STYLE>), nor are the extra
 parends around $obj and 'foo'.  But they make it more obvious what's going
@@ -494,12 +494,12 @@ on here, in your author's humble opinion.)
 
 If you could do that, that would be much nicer, yes?  Well, you can:
 
-	Debuggit::add_func(OBJDATA => 2, sub
-	{
-		my ($self, $obj, $data_name) = @_;
+    Debuggit::add_func(OBJDATA => 2, sub
+    {
+        my ($self, $obj, $data_name) = @_;
 
-		return (ref($obj) . "->$data_name =", $obj->{'_data'}->{$data_name});
-	});
+        return (ref($obj) . "->$data_name =", $obj->{'_data'}->{$data_name});
+    });
 
 What that's saying is this:  Any time C<debuggit()> comes across an
 argument consisting of the string 'OBJDATA', it should remove it, plus the
@@ -516,20 +516,20 @@ formatter (see default_formatter(), above).
 A function doesn't have to take any arguments, nor does it have to return
 any.  For instance, you could replace this:
 
-	debuggit('=' x 40);
-	debuggit("new code section starts here");
+    debuggit('=' x 40);
+    debuggit("new code section starts here");
 
 with this:
 
-	debuggit(SEPARATOR => "new code section starts here");
+    debuggit(SEPARATOR => "new code section starts here");
 
 by defining your function thus:
 
-	Debuggit::add_func(SEPARATOR => 0, sub
-	{
-		$Debuggit::output->('=' x 40);
-		return ();
-	});
+    Debuggit::add_func(SEPARATOR => 0, sub
+    {
+        $Debuggit::output->('=' x 40);
+        return ();
+    });
 
 Many other clever things can be done.  Remember the difference between
 functions and formatters, which is covered above.
@@ -539,12 +539,12 @@ functions and formatters, which is covered above.
 At present, there is only one debugging function that Debuggit provides for
 you by default:
 
-	debuggit("my hash:", DUMP => \%my_hash);
+    debuggit("my hash:", DUMP => \%my_hash);
 
 This is basically the same as:
 
-	use Data::Dumper;
-	debuggit("my hash:", Dumper(\%my_hash));
+    use Data::Dumper;
+    debuggit("my hash:", Dumper(\%my_hash));
 
 with one important exception: instead of loading Data::Dumper via a use
 statement, the DUMP debugging function loads it via a require statement,
@@ -572,21 +572,21 @@ takes the list returned from the coderef and inserts it back into
 debuggit()'s argument list at the point at which the arguments were
 removed.  Basically, inside debuggit(), it does the equivalent of this:
 
-	$n = $func_name_being_checked_for;
-	$i = $point_at_which_func_name_found;
-	splice @_, $i, $funcs{$n}->{'num_args'} + 1, $funcs{$n}->{'coderef'}->(@_[$i..$i+$funcs{$n}->{'num_args'}]);
+    $n = $func_name_being_checked_for;
+    $i = $point_at_which_func_name_found;
+    splice @_, $i, $funcs{$n}->{'num_args'} + 1, $funcs{$n}->{'coderef'}->(@_[$i..$i+$funcs{$n}->{'num_args'}]);
 
 except hopefully more efficiently.
 
 The name of the function is passed in so that you can do excessively clever
 things such as:
 
-	my $print_config = sub
-	{
-		my ($self, $value) = @_;
-		return ("Config ${self}->$value is", $CONFIG->{$self}->{$value});
-	};
-	Debuggit::add_func($_ => 1, $print_config) foreach qw< FOO BAR BAZ BMOOGLE >;
+    my $print_config = sub
+    {
+        my ($self, $value) = @_;
+        return ("Config ${self}->$value is", $CONFIG->{$self}->{$value});
+    };
+    Debuggit::add_func($_ => 1, $print_config) foreach qw< FOO BAR BAZ BMOOGLE >;
 
 But do remember that excessive cleverness often leads to nightmarish
 maintenance, so caveat codor.
@@ -617,7 +617,7 @@ functions, it really isn't a problem.
 This just removes the given debugging function.  Default functions are not
 special in any way, so those can be removed just as others can:
 
-	Debuggit::remove_func('DUMP');
+    Debuggit::remove_func('DUMP');
 
 =cut
 
@@ -631,23 +631,23 @@ my %PROCS;
 
 BEGIN
 {
-	$add_func = q{
-		sub Debuggit::add_func
-		{
-			my ($name, $argc, $code) = @_;
+    $add_func = q{
+        sub Debuggit::add_func
+        {
+            my ($name, $argc, $code) = @_;
 
-			$Debuggit::PROCS{$name} = { argc => $argc, code => $code };
+            $Debuggit::PROCS{$name} = { argc => $argc, code => $code };
 
-			return 1;
-		}
-	};
+            return 1;
+        }
+    };
 }
 
 
 sub remove_func
 {
-	delete $Debuggit::PROCS{shift()};
-	return 1;
+    delete $Debuggit::PROCS{shift()};
+    return 1;
 }
 
 
@@ -659,25 +659,25 @@ sub remove_func
 
 sub _process_funcs
 {
-	my @parts;
+    my @parts;
 
-	while (@_)
-	{
-		local $_ = shift;
+    while (@_)
+    {
+        local $_ = shift;
 
-		if ($_ and exists $Debuggit::PROCS{$_})
-		{
-			my @args = ($_);
-			push @args, shift foreach 1..$Debuggit::PROCS{$_}->{argc};
-			push @parts, $Debuggit::PROCS{$_}->{code}->(@args);
-		}
-		else
-		{
-			push @parts, $_;
-		}
-	}
+        if ($_ and exists $Debuggit::PROCS{$_})
+        {
+            my @args = ($_);
+            push @args, shift foreach 1..$Debuggit::PROCS{$_}->{argc};
+            push @parts, $Debuggit::PROCS{$_}->{code}->(@args);
+        }
+        else
+        {
+            push @parts, $_;
+        }
+    }
 
-	return @parts;
+    return @parts;
 }
 
 
@@ -694,38 +694,38 @@ features, such as setting formatters, or adding debugging functions, except
 that now you're putting the same lines of code at the top of every one of
 your Perl modules:
 
-	use Debuggit;
-	$Debuggit::formatter = sub { return scalar(localtime) . ': ' . Debuggit::default_formatter(@_) };
-	$Debuggit::output = sub { warn @_ };		# because I use $SIG{__WARN__}
-	Debuggit::add_func(CONFIG => 1, sub { my ($self, $var) = $_; return "$self var $var is $Config->{$var}" });
+    use Debuggit;
+    $Debuggit::formatter = sub { return scalar(localtime) . ': ' . Debuggit::default_formatter(@_) };
+    $Debuggit::output = sub { warn @_ };        # because I use $SIG{__WARN__}
+    Debuggit::add_func(CONFIG => 1, sub { my ($self, $var) = $_; return "$self var $var is $Config->{$var}" });
 
 Whew!  A bit verbose, eh?  Would be nice if we could centralize that somehow.
 
 Okay, try this:
 
-	package MyDebuggit;
+    package MyDebuggit;
 
-	use Debuggit ();			# don't let Debuggit import here, or you'll get redeclaration errors
+    use Debuggit ();            # don't let Debuggit import here, or you'll get redeclaration errors
 
-	$Debuggit::formatter = sub { return scalar(localtime) . ': ' . Debuggit::default_formatter(@_) };
-	$Debuggit::output = sub { warn @_ };		# because I use $SIG{__WARN__}
-	Debuggit::add_func(CONFIG => 1, sub { my ($self, $var) = $_; return "$self var $var is $Config->{$var}" });
+    $Debuggit::formatter = sub { return scalar(localtime) . ': ' . Debuggit::default_formatter(@_) };
+    $Debuggit::output = sub { warn @_ };        # because I use $SIG{__WARN__}
+    Debuggit::add_func(CONFIG => 1, sub { my ($self, $var) = $_; return "$self var $var is $Config->{$var}" });
 
-	sub import
-	{
-		my $class = shift;
-		Debuggit->import(PolicyModule => 1, @_);
-	}
+    sub import
+    {
+        my $class = shift;
+        Debuggit->import(PolicyModule => 1, @_);
+    }
 
 The 'PolicyModule' argument to Debuggit::import() just tells it to install
 DEBUG and debuggit() one level higher than usual, so that your caller (not
 you) gets all that debuggity goodness.  Now you can just:
 
-	use MyDebuggit;
+    use MyDebuggit;
 
 or, similarly:
 
-	use MyDebuggit(DEBUG => 2);
+    use MyDebuggit(DEBUG => 2);
 
 and you're all set.
 
@@ -738,14 +738,14 @@ what keeps the world a wonderful place.
 
 First, there's the difference between these two:
 
-	debuggit("here I am!") if DEBUG >= 2;
-	debuggit(2 => "here I am!");
+    debuggit("here I am!") if DEBUG >= 2;
+    debuggit(2 => "here I am!");
 
 Personally I prefer #2, but please see important information below under
 L</PERFORMANCE>.  Functionally, they are the same ... when debugging is on.
 However, here's an interesting thing that tripped me up recently:
 
-	debuggit(4 => "row is", join(':', @$row));
+    debuggit(4 => "row is", join(':', @$row));
 
 As you might guess from the names, this was in a tight loop that processed
 each row coming back from a database.  What I hadn't considered was that,
@@ -753,14 +753,14 @@ even when debugging was totally off, it was still doing that join() call
 for every row of data, then passing the results to an empty function.  In
 this case, the equivalent:
 
-	debuggit("row is", join(':', @$row)) if DEBUG >= 4;
+    debuggit("row is", join(':', @$row)) if DEBUG >= 4;
 
 really was significantly better (again, see L</PERFORMANCE> for why).
 
 Assuming you went with #2 above, you then have to decide between these two:
 
-	debuggit(2 => "here I am!");
-	debuggit(2, "here I am!");
+    debuggit(2 => "here I am!");
+    debuggit(2, "here I am!");
 
 I strongly recommend the first one.  To me, #2 just looks like it will print "2
 here I am!", which it won't.  #1 is using the fat comma to offset the debugging
@@ -768,8 +768,8 @@ level from the debugging arguments, and that seems to me to be a Good Thing(tm).
 
 How about a similar choice for functions?
 
-	debuggit("here's my big structure", DUMP => $struct);
-	debuggit("here's my big structure", 'DUMP', $struct);
+    debuggit("here's my big structure", DUMP => $struct);
+    debuggit("here's my big structure", 'DUMP', $struct);
 
 My objections to #2 are the same: it looks like "DUMP" is part of the
 debugging output, and it isn't.  For me, the fat comma in a C<debuggit> arg list
@@ -780,9 +780,9 @@ On the other hand, don't fall into the trap of thinking that every time you
 use a fat comma debuggit() is going to know that you don't want to print the
 thing that precedes it.  For instance, this:
 
-	debuggit("this is not a func", hey => "even though it looks like one");
-	# unless you defined a func named 'hey', of course
-	# but don't do that; you should use all caps for func names
+    debuggit("this is not a func", hey => "even though it looks like one");
+    # unless you defined a func named 'hey', of course
+    # but don't do that; you should use all caps for func names
 
 Remember, the fat comma is still just a comma; debuggit() has no way to tell
 from its argument list whether you used a fat comma or not.  Use => as a sign
@@ -806,9 +806,9 @@ How many levels should you use?  Well, the quite excellent Log::Log4perl has 6,
 and they're named instead of numbered, so that you know what to use each level
 for.  It also contains this very curious statement:
 
-	Neither does anyone need more logging levels than these predefined ones.
-	If you think you do, I would suggest you look into steering your logging
-	behaviour via the category mechanism.
+    Neither does anyone need more logging levels than these predefined ones.
+    If you think you do, I would suggest you look into steering your logging
+    behaviour via the category mechanism.
 
 No offense to Log4perl's author, but I always found this statement to be a bit
 ... well, snooty, to put it mildly.  My personal view is, who am I to say how
@@ -821,34 +821,34 @@ your code, those who come after you will inevitably curse your name.
 One last caution:  You may want to define constants for your debugging levels,
 like so:
 
-	use constant QUIET => 1;
-	use constant SOFTER => 2;
-	use constant LOUDER => 3;
-	use constant LITTLE_BIT_LOUDER_NOW => 4;
-	# and so forth
+    use constant QUIET => 1;
+    use constant SOFTER => 2;
+    use constant LOUDER => 3;
+    use constant LITTLE_BIT_LOUDER_NOW => 4;
+    # and so forth
 
 And then you may think you're going to use them like so:
 
-	debuggit(LOUDER => "this is not going to print what you think");
+    debuggit(LOUDER => "this is not going to print what you think");
 
 (Unless you think it's going to print "LOUDER this is not going to print what
 you think", in which case you'd be absolutely right.)  Remember that the fat
 comma autoquotes whatever comes before it, which deconstantifies your identifier
 there.  You'll have to settle on one of these:
 
-	debuggit(LOUDER, "this works fine");
-	debuggit(LOUDER() => "as does this");
+    debuggit(LOUDER, "this works fine");
+    debuggit(LOUDER() => "as does this");
 
 Or, alternatively, don't use C<constant> and use something like L<Const::Fast>
 instead:
 
-	constant our $QUIET => 1;
-	constant our $SOFTER => 2;
-	constant our $LOUDER => 3;
-	constant our $LITTLE_BIT_LOUDER_NOW => 4;
-	# and so forth
+    constant our $QUIET => 1;
+    constant our $SOFTER => 2;
+    constant our $LOUDER => 3;
+    constant our $LITTLE_BIT_LOUDER_NOW => 4;
+    # and so forth
 
-	debuggit($LOUDER => "this one works fine too");
+    debuggit($LOUDER => "this one works fine too");
 
 Personally your humble author, while preferring to use constants most of the
 time, doesn't actually use them for debugging levels.  Possibly because the
@@ -861,7 +861,7 @@ So is calling debuggit completely free?  Well, yes and no.
 
 If you use this style:
 
-	debuggit("here I am!") if DEBUG >= 2;
+    debuggit("here I am!") if DEBUG >= 2;
 
 then, assuming DEBUG is set to 0 (but not 1!), it is indeed 100% free.  In
 fact, the test suite actually uses L<B::Deparse> to insure that the above
@@ -872,7 +872,7 @@ C<use Debuggit> does not add anything to your program's memory footprint.
 
 This style, however:
 
-	debuggit(2 => "here I am!");
+    debuggit(2 => "here I am!");
 
 is slightly more problematic.  Unfortunately, without using a source filter
 (which is a possibility for a future version, although it would be strictly
@@ -933,40 +933,40 @@ of these latter modules are designed to be used as part of a larger
 distribution, but I<could> be used separately, and offer similar functionality
 to B<Debuggit>, so I threw them in there.  What the heck.
 
-	d   == debug
-	D   == Debug
-	DM  == Debug::Message
-	DEM == Debug::EchoMessage
-	LCD == LEOCHARRE::DEBUG
-	PTD == PTools::Debug
-	KD  == Konstrukt::Debug
-	BD  == Blosxom::Debug
-	NXD == Net::XMPP::Debug
+    d   == debug
+    D   == Debug
+    DM  == Debug::Message
+    DEM == Debug::EchoMessage
+    LCD == LEOCHARRE::DEBUG
+    PTD == PTools::Debug
+    KD  == Konstrukt::Debug
+    BD  == Blosxom::Debug
+    NXD == Net::XMPP::Debug
 
-	Feature                                    | Debuggit | d | D | DM | DEM | LCD | PTD | BD | KD | NXD |
-	-------------------------------------------|----------|---|---|----|-----|-----|-----|----|----|-----|
-	DEBUG constant                             |     X    | X |   |    |     |  X  |     |    |    |     |
-	output function                            |     X    | X | X | X  |  X  |  X  |  X  | X  | X  |  X  |
-	  override formatting                      |     X    | X |   |    |     |     |     |    |    |     |
-	  override where output goes               |     X    | X |   | X  |     |     |     |    |    |     |
-	  override them separately                 |     X    |   |   |    |     |     |     |    |    |     |
-	  handles undefined values                 |     X    |   |   |    |     |     |     |    |    |     |
-	  handles vars w/ leading/trailing spaces  |     X    |   |   |    |     |     |     |    |    |     |
-	  can print color messages                 |          |   |   | X  |     |  X  |     |    |    |     |
-	  can specify indent level                 |          |   |   | X  |  X  |     |  X  |    |    |     |
-	  custom formatting functions              |     X    |   |   |    |     |     |     |    |    |     |
-	multiple debugging levels                  |     X    |   |   | X  |  X  |  X  |  X  | X  | X  |  X  |
-	  levels are effectively unlimited         |     X    |   |   | X  |  X  |  X  |  X  | X  |    |  X  |
-	  can specify levels as arbitrary strings  |          |   |   |    |     |  X  |     |    |    |     |
-	has OO interface                           |          | X | X | X  |  X  |     |  X  |    | X  |  X  |
-	  OO interface is optional                 |          | X |   |    |     |     |     |    |    |     |
-	is self-contained (no dependencies)        |     X    | X | X |    |  X  |  X  |     | X  |    |     |
-	  doesn't come bundled with other modules  |     X    | X | X | X  |  X  |  X  |     | X  |    |     |
-	control from outside module to be debugged |     X    | X |   |    |     |  X  |     |    |    |     |
-	  fallthrough from top level script        |     X    |   |   |    |     |     |     |    |    |     |
-	  arbitrary control by module name         |          | X |   |    |     |     |     |    |    |     |
-	  arbitrary control by package variable    |          |   |   |    |     |  X  |     |    |    |     |
-	-------------------------------------------+----------+---+---+----+-----+-----+-----+----+----+-----+
+    Feature                                    | Debuggit | d | D | DM | DEM | LCD | PTD | BD | KD | NXD |
+    -------------------------------------------|----------|---|---|----|-----|-----|-----|----|----|-----|
+    DEBUG constant                             |     X    | X |   |    |     |  X  |     |    |    |     |
+    output function                            |     X    | X | X | X  |  X  |  X  |  X  | X  | X  |  X  |
+      override formatting                      |     X    | X |   |    |     |     |     |    |    |     |
+      override where output goes               |     X    | X |   | X  |     |     |     |    |    |     |
+      override them separately                 |     X    |   |   |    |     |     |     |    |    |     |
+      handles undefined values                 |     X    |   |   |    |     |     |     |    |    |     |
+      handles vars w/ leading/trailing spaces  |     X    |   |   |    |     |     |     |    |    |     |
+      can print color messages                 |          |   |   | X  |     |  X  |     |    |    |     |
+      can specify indent level                 |          |   |   | X  |  X  |     |  X  |    |    |     |
+      custom formatting functions              |     X    |   |   |    |     |     |     |    |    |     |
+    multiple debugging levels                  |     X    |   |   | X  |  X  |  X  |  X  | X  | X  |  X  |
+      levels are effectively unlimited         |     X    |   |   | X  |  X  |  X  |  X  | X  |    |  X  |
+      can specify levels as arbitrary strings  |          |   |   |    |     |  X  |     |    |    |     |
+    has OO interface                           |          | X | X | X  |  X  |     |  X  |    | X  |  X  |
+      OO interface is optional                 |          | X |   |    |     |     |     |    |    |     |
+    is self-contained (no dependencies)        |     X    | X | X |    |  X  |  X  |     | X  |    |     |
+      doesn't come bundled with other modules  |     X    | X | X | X  |  X  |  X  |     | X  |    |     |
+    control from outside module to be debugged |     X    | X |   |    |     |  X  |     |    |    |     |
+      fallthrough from top level script        |     X    |   |   |    |     |     |     |    |    |     |
+      arbitrary control by module name         |          | X |   |    |     |     |     |    |    |     |
+      arbitrary control by package variable    |          |   |   |    |     |  X  |     |    |    |     |
+    -------------------------------------------+----------+---+---+----+-----+-----+-----+----+----+-----+
 
 There are, of course, additional considerations in terms of coding style, which
 may or may not be important to you.  Also, at least one (Blosxom::Debug) uses
@@ -996,7 +996,7 @@ None that I know of.  However, lacking omniscience, I welcome bug reports.
 
 This program is free software licensed under
 
-	The Artistic License
+    The Artistic License
 
 The full text of the license can be found in the
 LICENSE file included with this module.
