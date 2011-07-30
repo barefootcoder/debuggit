@@ -118,9 +118,7 @@ pretty full life outside CPAN as well.
 
 The Changes file details this life fairly accurately.  The version numbers are assigned using 20/20
 hindsight, and I've filled in a few gaps in historical notes, but all the dates and most of the
-commit messages are fully accurate, and thanks to the wonders of version control I still have every
-previous version (save one, which is so marked).  Not that you care, I'm sure.  But it was fun going
-back through the past ten years of Debuggit's history.
+commit messages are fully accurate, thanks to the wonders of version control.
 
 =cut
 
@@ -443,8 +441,7 @@ You could also save to a string:
     local $Debuggit::output = sub { $log_msg .= join('', @_) };
 
 Again, we're appending.  We join all the args together (although most formatters will return only
-one value, probably best not to assume), but use no separator.  Also note the use of C<our>; you
-probably want that rather than a C<my> variable.
+one value, probably best not to assume), but use no separator.
 
 The default output function is merely:
 
@@ -713,6 +710,17 @@ or, similarly:
 
 and you're all set.
 
+Note how the import passes C<@_> on to C<Debuggit::import>.  This is what makes that second C<use
+MyDebuggit> example work.  You don't have to do that, of course.  For instance, if you're writing a
+module for all your test scripts to include, you might wish to force C<DEBUG> to always be 1.
+That's easy too:
+
+    use Debuggit ();
+    sub import
+    {
+        Debuggit->import(PolicyModule => 1, DEBUG => 1);
+    }
+
 =head1 STYLE
 
 This is a pretty simple module, but there are still a couple of different ways to do things.  Here
@@ -817,10 +825,10 @@ which deconstantifies your identifier there.  You'll have to settle on one of th
 
 Or, alternatively, don't use C<constant> and use something like L<Const::Fast> instead:
 
-    constant our $QUIET => 1;
-    constant our $SOFTER => 2;
-    constant our $LOUDER => 3;
-    constant our $LITTLE_BIT_LOUDER_NOW => 4;
+    const our $QUIET => 1;
+    const our $SOFTER => 2;
+    const our $LOUDER => 3;
+    const our $LITTLE_BIT_LOUDER_NOW => 4;
     # and so forth
 
     debuggit($LOUDER => "this one works fine too");
@@ -850,9 +858,8 @@ This style, however:
 
 is slightly more problematic.  Unfortunately, without using a source filter (which is a possibility
 for a future version, although it would be strictly optional), there just isn't any way that I can
-see to eliminate that call.  (Unless maybe it could be done with something like C<optimizer> or
-C<Devel::Declare>, but I fear that may be beyond my meager Perl hacking ability ... patches
-welcome!)
+see to eliminate that call.  (Unless maybe it could be done with something like C<Devel::Declare> or
+C<optimizer>, but I fear that may be beyond my meager Perl hacking ability ... patches welcome!)
 
 So if you prefer that second style (as does your humble author), then what you end up with is a
 guarantee that your C<debuggit> calls will resolve to calls to empty functions, which take a very
@@ -945,6 +952,14 @@ None that I know of.  However, lacking omniscience, I welcome bug reports.
 
 
 =head1 SUPPORT
+
+Debuggit is on GitHub at barefootcoder/debuggit.  Feel free to fork and submit patches.  Please note
+that I develop via TDD (Test-Driven Development), so a patch that includes a failing test is much
+more likely to get accepted (or least accepted more quickly).
+
+If you just want to report a problem or suggest a feature, that's okay too.  You can create an issue
+on GitHub, or a bug in CPAN's RT (at http://rt.cpan.org).  Or just send an email to
+bug-Debuggit@rt.cpan.org.
 
 
 
