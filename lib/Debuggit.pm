@@ -64,7 +64,7 @@ any space or cause any slowdown of your production application.  Sounds impossib
 Debuggit.
 
 
-=head1 Quick Start
+=head2 Quick Start
 
 To start:
 
@@ -93,7 +93,7 @@ Later ...
 That's it.  Really.  Everything else is just gravy.
 
 
-=head1 A Note on Documentation
+=head2 A Note on Documentation
 
 You know, documentation is a double-edged sword.  Put too little, and no one will use your module
 because it's poorly documented.  Put too much, and no one will use your module because it I<must> be
@@ -106,7 +106,7 @@ I<is> this documentation.)  Start with the L</Quick Start> above.  After you get
 simple Debuggit is to use like that, and want to explore more options, come back and read the rest.
 Because everything thing else is completely optional.
 
-=head1 A Note on Version Numbers
+=head2 A Note on Version Numbers
 
 I know it's very fashionable to mark any module you put on CPAN for the first time as version
 0.000000001, and then take about eight years before daring to release a 1.0.  However, this module
@@ -472,8 +472,8 @@ our $output = sub { print STDERR @_ };
 When writing debugging statements, you may find yourself doing the same operations over and over
 again.  For instance, imagine that you have a set of objects that can belong to one of several
 subclasses.  Internally, these are stored as hashes (as many objects in Perl are), and each hash
-contains a '_data' key whose value is a hash, which itself contains all the interesting bits of data
-for the object.  For debugging purposes, you often need to print out the exact type of a given
+contains a '_data' key whose value is a hashref, which itself contains all the interesting bits of
+data for the object.  For debugging purposes, you often need to print out the exact type of a given
 object along with a particular data value.  You may find yourself writing something like this over
 and over again:
 
@@ -716,6 +716,7 @@ module for all your test scripts to include, you might wish to force C<DEBUG> to
 That's easy too:
 
     use Debuggit ();
+    $Debuggit::output = sub { diag @_ };        # nicer with Test::More et al
     sub import
     {
         Debuggit->import(PolicyModule => 1, DEBUG => 1);
@@ -848,7 +849,7 @@ If you use this style:
 
 then, assuming DEBUG is set to 0 (or 1, even), it is indeed 100% free.  In fact, the test suite
 actually uses L<B::Deparse> to insure that the above statement produces no actual code when C<DEBUG
-== 0>, and if you happen to have L<Gtop> installed (which I believe would mean that you would have
+== 0>, and if you happen to have L<GTop> installed (which I believe would mean that you would have
 to happen to be running under Linux), the test suite will also verify that C<use Debuggit> does not
 add anything to your program's memory footprint.
 
@@ -940,8 +941,8 @@ and offer similar functionality to B<Debuggit>, so I threw them in there.  What 
     -------------------------------------------+----------+---+---+----+-----+-----+-----+----+----+-----+
 
 There are, of course, additional considerations in terms of coding style, which may or may not be
-important to you.  Also, at least one (Blosxom::Debug) uses source filtering, which you may or may
-not object to.
+important to you.  Also, at least one (L<Blosxom::Debug>) uses source filtering, which you may or
+may not object to.
 
 
 
