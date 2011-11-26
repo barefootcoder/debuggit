@@ -12,5 +12,6 @@ test_requires   'Test::Output'      => '0.16';
 test_requires   'Test::Exception'   => '0.29';
 
 githubmeta;
+jsonmeta;
 
 WriteAll;
