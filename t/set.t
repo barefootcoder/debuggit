@@ -1,11 +1,9 @@
-#! /usr/bin/perl
-
 use strict;
 use warnings;
 
-use Test::More;
-use Test::Warn;
-use Test::Output;
+use Test::More      0.88                            ;
+use Test::Warn      0.23                            ;
+use Test::Output    0.16                            ;
 
 use Debuggit(DEBUG => 2);
 
@@ -25,4 +23,4 @@ warning_is { debuggit() } undef, "no warning from blank arg list";
 stderr_is { debuggit() } '', "got no output from blank arg list";
 
 
-done_testing();
+done_testing;

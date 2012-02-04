@@ -1,10 +1,8 @@
-#! /usr/bin/perl
-
 use strict;
 use warnings;
 
-use Test::Output;
-use Test::More;
+use Test::More      0.88                            ;
+use Test::Output    0.16                            ;
 
 use Debuggit(DEBUG => 2);
 
@@ -22,4 +20,4 @@ stderr_is { debuggit(2 => $trailing_spaces); } "<<$trailing_spaces>>\n", "output
 stderr_is { debuggit(2 => $with_newline); } "$with_newline\n", "output containing newline";
 
 
-done_testing();
+done_testing;
