@@ -1,16 +1,19 @@
 Revision history for Perl module Debuggit
 
 
+2.01_02 Nov 25, 2011
+    - adding META.json
+
 2.01_01 Nov 2, 2011
     - adding GitHub repo info
 
 2.01 Jul 29, 2011
+    - initial CPAN release
     - updates to POD
     - fixed Changes file (now in reverse chronological order)
-    - real release (not dev version)
 
-2.00_01 Apr 3, 2011
-    - initial upload to CPAN
+    Dev versions:
+    2.00_01 Apr 3, 2011
 
 2.00 Mar 29, 2011
     - initial version as Debuggit.pm
