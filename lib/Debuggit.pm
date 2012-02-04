@@ -201,9 +201,17 @@ sub import
     my $debug_value = defined $opts{DEBUG} ? $opts{DEBUG} : defined $master_debug ? $master_debug : 0;
     eval "sub Debuggit::DEBUG () { return $debug_value; }" unless defined $master_debug;
 
-    my $caller_defined = defined eval "${caller_package}::DEBUG();";
-    eval "sub ${caller_package}::DEBUG () { $debug_value }" unless $caller_defined;
+    my $caller_value = eval "${caller_package}::DEBUG();";
+    if (defined $caller_value)
+    {
+        warn("cannot redefine DEBUG; original value of $caller_value is used") if $debug_value ne $caller_value;
+    }
+    else
+    {
+        eval "sub ${caller_package}::DEBUG () { $debug_value }";
+    }
 
+    no warnings 'redefine';
     if ($debug_value)
     {
         my $d = $debuggit;
@@ -721,6 +729,29 @@ That's easy too:
     {
         Debuggit->import(PolicyModule => 1, DEBUG => 1);
     }
+
+
+
+=head1 DIAGNOSTICS
+
+=over 4
+
+=item * cannot redefine DEBUG; original value of %s is used
+
+It means you did something like this:
+
+    use Debuggit DEBUG => 2;
+    use Debuggit DEBUG => 3;
+
+only probably not nearly so obvious.  Debuggit tries to be very tolerant of multiple imports into
+the same package, but the C<DEBUG> symbol is a constant function and can't be redefined without
+engendering severe wonkiness, so Debuggit won't do it.  As long as you pass the same value for
+C<DEBUG>, that's okay.  But if the second (or more) value is different from the first, then you will
+get the original value regardless.  At least this way you'll be forewarned.
+
+=back
+
+
 
 =head1 STYLE
 
