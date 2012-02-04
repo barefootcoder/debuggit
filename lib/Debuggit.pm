@@ -199,7 +199,10 @@ sub import
 
     my $master_debug = eval "Debuggit::DEBUG();";
     my $debug_value = defined $opts{DEBUG} ? $opts{DEBUG} : defined $master_debug ? $master_debug : 0;
-    eval "sub Debuggit::DEBUG () { return $debug_value; }" unless defined $master_debug;
+    _setup_master($debug_value) unless defined $master_debug;
+
+    no strict 'refs';
+    no warnings 'redefine';
 
     my $caller_value = eval "${caller_package}::DEBUG();";
     if (defined $caller_value)
@@ -208,15 +211,24 @@ sub import
     }
     else
     {
-        eval "sub ${caller_package}::DEBUG () { $debug_value }";
+        # Thanx to tye from perlmonks for this line of code, which solves the Pod::Coverage issue
+        # (see t/pod_coverage.t).               http://www.perlmonks.org/?node_id=951831
+        *{ join('::', $caller_package, 'DEBUG') } = sub () { $debug_value };
     }
 
-    no warnings 'redefine';
+    *{ join('::', $caller_package, 'debuggit') } = \&debuggit;
+}
+
+
+sub _setup_master
+{
+    my ($debug_value) = @_;
+
+    eval "sub Debuggit::DEBUG () { return $debug_value; }";
+
     if ($debug_value)
     {
-        my $d = $debuggit;
-        $d =~ s/debuggit/${caller_package}::debuggit/;
-        eval $d;
+        eval $debuggit;
 
         eval $add_func unless Debuggit->can('add_func');
 
@@ -230,7 +242,7 @@ sub import
     }
     else
     {
-        eval "sub ${caller_package}::debuggit {}";
+        eval "sub debuggit {}";
         *add_func = sub {};
     }
 }
