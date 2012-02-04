@@ -199,7 +199,7 @@ sub import
 
     my $master_debug = eval "Debuggit::DEBUG();";
     my $debug_value = defined $opts{DEBUG} ? $opts{DEBUG} : defined $master_debug ? $master_debug : 0;
-    _setup_master($debug_value) unless defined $master_debug;
+    *Debuggit::DEBUG = sub () { $debug_value } unless defined $master_debug;
 
     no strict 'refs';
     no warnings 'redefine';
@@ -216,35 +216,33 @@ sub import
         *{ join('::', $caller_package, 'DEBUG') } = sub () { $debug_value };
     }
 
-    *{ join('::', $caller_package, 'debuggit') } = \&debuggit;
-}
-
-
-sub _setup_master
-{
-    my ($debug_value) = @_;
-
-    eval "sub Debuggit::DEBUG () { return $debug_value; }";
-
     if ($debug_value)
     {
-        eval $debuggit;
-
-        eval $add_func unless Debuggit->can('add_func');
-
-        # create default function
-        add_func(DUMP => 1, sub
-        {
-            require Data::Dumper;
-            shift;
-            return Data::Dumper::Dumper(shift);
-        });
+        _setup_funcs();
+        *{ join('::', $caller_package, 'debuggit') } = \&debuggit;
     }
     else
     {
-        eval "sub debuggit {}";
-        *add_func = sub {};
+        *{ join('::', $caller_package, 'debuggit') } = sub {};
     }
+}
+
+
+sub _setup_funcs
+{
+    my ($debug_value) = @_;
+
+    eval $debuggit unless Debuggit->can('debuggit');
+
+    eval $add_func unless Debuggit->can('add_func');
+
+    # create default function
+    add_func(DUMP => 1, sub
+    {
+        require Data::Dumper;
+        shift;
+        return Data::Dumper::Dumper(shift);
+    });
 }
 
 
