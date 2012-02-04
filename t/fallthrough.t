@@ -1,8 +1,6 @@
 use strict;
 use warnings;
 
-#BEGIN { warn("current package ", __PACKAGE__); }
-
 use Test::More      0.88                            ;
 use Test::Output    0.16                            ;
 

@@ -1,3 +1,4 @@
+# for use with t/policy.t
 package MyDebuggit;
 
 use Debuggit ();
