@@ -880,9 +880,8 @@ If you use this style:
 
 then, assuming DEBUG is set to 0 (or 1, even), it is indeed 100% free.  In fact, the test suite
 actually uses L<B::Deparse> to insure that the above statement produces no actual code when C<DEBUG
-== 0>, and if you happen to have L<GTop> installed (which I believe would mean that you would have
-to happen to be running under Linux), the test suite will also verify that C<use Debuggit> does not
-add anything to your program's memory footprint.
+== 0>, and if you happen to have L<GTop> or L<Memory::Usage> (or both) installed, the test suite
+will also verify that C<use Debuggit> does not add anything to your program's memory footprint.
 
 This style, however:
 
