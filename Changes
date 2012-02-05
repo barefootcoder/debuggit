@@ -1,6 +1,12 @@
 Revision history for Perl module Debuggit
 
 
+2.01_03 Feb 4, 2012
+    - fixed annoying "redefined" warnings
+    - fixed annoying "naked subroutines" test failures for callers of Debuggit
+    - can now override the system wide DEBUG for a specific module
+    - adding another test to insure no additional memory is used
+
 2.01_02 Nov 25, 2011
     - adding META.json
 
