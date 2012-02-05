@@ -224,6 +224,7 @@ sub import
     else
     {
         *{ join('::', $caller_package, 'debuggit') } = sub {};
+        *Debuggit::add_func = sub {} unless Debuggit->can('add_func');
     }
 }
 
@@ -290,7 +291,9 @@ BEGIN
     $debuggit = q{
         sub debuggit
         {
-            return unless @_ > 0 && ($_[0] =~ /^\d+$/ ? shift : 1) <= DEBUG;
+            no strict 'refs';
+            my $debug = join('::', scalar(caller), 'DEBUG');
+            return unless @_ > 0 && ($_[0] =~ /^\d+$/ ? shift : 1) <= $debug->();
             $Debuggit::output->($Debuggit::formatter->(Debuggit::_process_funcs(@_)));
         }
     };
