@@ -1,6 +1,9 @@
 Revision history for Perl module Debuggit
 
 
+2.01_04 Feb 6, 2012
+    - proper handling of Pod::Coverage's absence in t/pod_coverage.t
+
 2.01_03 Feb 4, 2012
     - fixed annoying "redefined" warnings
     - fixed annoying "naked subroutines" test failures for callers of Debuggit
