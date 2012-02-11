@@ -6,7 +6,12 @@ use lib 't/lib';
 use Test::More      0.88                            ;
 use Test::Exception 0.31                            ;
 
-use Pod::Coverage;
+
+eval "use Pod::Coverage";
+if ($@)
+{
+    plan skip_all => "Pod::Coverage required for testing pod coverage export exposure";
+}
 
 
 # See t/pod_coverage.t.  I really would prefer to keep this test with the other, but then it whines
