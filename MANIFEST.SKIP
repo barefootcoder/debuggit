@@ -4,4 +4,4 @@ Makefile$
 bench.t
 .*\.swp
 blib/
-.git/
+\.git/

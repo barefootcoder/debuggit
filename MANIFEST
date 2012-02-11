@@ -10,6 +10,8 @@ inc/Module/Install/Metadata.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/Debuggit.pm
+lib/Debuggit/Cookbook.pm
+lib/Debuggit/Manual.pm
 LICENSE
 Makefile.PL
 MANIFEST
