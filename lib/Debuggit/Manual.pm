@@ -68,7 +68,7 @@ commit messages are fully accurate, thanks to the wonders of version control.
 
 =head1 The DEBUG Constant
 
-C<DEBUG> is a constant (similar to those defined with L<constant>) which holds your current
+C<DEBUG> is a constant (similar to those defined with C<use constant>) which holds your current
 debugging level.  Because it's implemented using constant folding, any conditional based on it will
 actually be removed during compile-time if the debugging level isn't high enough (or turned off
 completely).  For instance, this code:
@@ -128,9 +128,9 @@ it I<for that package>.  Each package, however, gets its own value of DEBUG and 
 (theoretically) all be different.  Although that's a recipe for disastrous confusion.  Or confusing
 disaster.  Or something ... don't do it, in any event.
 
-But it could easily make sense to turn on debugging only for one particular module, if you just know
-the problem is in that module.  This is fine; the "master value" (i.e. the value from the top-level
-script) will fall through, but it won't override a specific value you pass in.
+But it could easily make sense to turn on debugging only for one particular module, if you just
+I<know> the problem is in that module.  This is fine; the "master value" (i.e. the value from the
+top-level script) will fall through, but it won't override a specific value you pass in.
 
 As far as C<debuggit> is concerned, the value of C<DEBUG> is whatever the value of C<DEBUG> is in
 the package that called it.  It's entirely possible for C<debuggit> to be an empty function to one
@@ -430,7 +430,8 @@ the top of every one of your Perl modules:
     use Debuggit;
     $Debuggit::formatter = sub { return scalar(localtime) . ': ' . Debuggit::default_formatter(@_) };
     $Debuggit::output = sub { warn @_ };        # because I use $SIG{__WARN__}
-    Debuggit::add_func(CONFIG => 1, sub { my ($self, $var) = $_; return "$self var $var is $Config->{$var}" });
+    Debuggit::add_func(CONFIG => 1,
+            sub { my ($self, $var) = $_; return (lc($self), 'var', $var, 'is', $Config->{$var}) });
 
 Whew!  A bit verbose, eh?  Would be nice if we could centralize that somehow.
 
@@ -438,16 +439,19 @@ Okay, try this:
 
     package MyDebuggit;
 
-    use Debuggit ();            # don't let Debuggit import here, or you'll get redeclaration errors
+    use Debuggit ();                            # no need to let Debuggit import here
 
     $Debuggit::formatter = sub { return scalar(localtime) . ': ' . Debuggit::default_formatter(@_) };
     $Debuggit::output = sub { warn @_ };        # because I use $SIG{__WARN__}
-    Debuggit::add_func(CONFIG => 1, sub { my ($self, $var) = $_; return "$self var $var is $Config->{$var}" });
 
     sub import
     {
         my $class = shift;
         Debuggit->import(PolicyModule => 1, @_);
+
+        # add_func has to be called after Debuggit->import()
+        Debuggit::add_func(CONFIG => 1,
+                sub { my ($self, $var) = $_; return (lc($self), 'var', $var, 'is', $Config->{$var}) });
     }
 
 The 'PolicyModule' argument to C<Debuggit::import> just tells it to install DEBUG and C<debuggit> one
@@ -458,12 +462,12 @@ can just:
 
 or, similarly:
 
-    use MyDebuggit(DEBUG => 2);
+    use MyDebuggit DEBUG => 2;
 
 and you're all set.
 
 Note how the import passes C<@_> on to C<Debuggit::import>.  This is what makes that second C<use
-MyDebuggit> example work.  For a counter-example, see L<Debuggit::Cookbook/"Interesting policy modules">.
+MyDebuggit> example work.  For a counter-example, see L<Debuggit::Cookbook/"Fun with policy modules">.
 
 
 

@@ -81,7 +81,7 @@ other.
 =head2 Debug to a string
 
 Instead of printing debugging immediately, perhaps you want to save them up and print them out at
-the end.  Sometimes this is useful when debugging web pages.
+the end.  This could be useful e.g. when debugging web pages.
 
     our $log_msg;
     local $Debuggit::output = sub { $log_msg .= join('', @_) };
@@ -89,7 +89,7 @@ the end.  Sometimes this is useful when debugging web pages.
 Again, we're appending.  We join all the args together (although most formatters will return only
 one value, probably best not to assume), but use no separator.  This example uses C<our> instead of
 C<my> for the string; this way, the variable is accessible from outside the current scope, which
-might be necessary for later printing (depending on where there current scope is).
+might be necessary for later printing (depending on where the current scope is).
 
 
 
@@ -121,17 +121,19 @@ the separator line goes where it should, even if someone wants to change where t
 sure we don't insert an C<undef> into the debugging output stream, we return an empty list.
 
 
-=head1 Interesting policy modules
+=head1 Fun with policy modules
 
 
 =head2 Test suite debugging
 
-Although typically a policy module will pass a debug value through to L<Debuggit>, it doesn't have
+Although a policy module will typically pass a debug value through to L<Debuggit>, it doesn't have
 to.  For instance, if you're writing a module for all your test scripts to include, you might wish
-to force C<DEBUG> to always be 1.  That's easy:
+to force C<DEBUG> to 1.  That's easy:
+
+    package MyTestDebuggit;
 
     use Debuggit ();
-	use Test::More;
+    use Test::More;
 
     $Debuggit::output = sub { diag @_ };        # nicer with Test::More et al
 

@@ -18,42 +18,43 @@ Debuggit - A fairly simplistic debug statement handler
 
 =head1 SYNOPSIS
 
-  use Debuggit(DEBUG => 1);
+    use Debuggit(DEBUG => 1);
 
-  # say you have a global hashref for your site configuration
-  # (not to imply that global vars are good)
-  our $Config = get_global_config();
+    # say you have a global hashref for your site configuration
+    # (not to imply that global vars are good)
+    our $Config = get_global_config();
 
-  # now we can set some config things based on whether we're in debug mode or not
-  $Config->{'DB'} = DEBUG ? 'dev' : 'prod';
+    # now we can set some config things based on whether we're in debug mode or not
+    $Config->{'DB'} = DEBUG ? 'dev' : 'prod';
 
-  # maybe we need to pull our local Perl modules from our VC working copy
-  push @INC, $Config->{'vcdir/lib'} if DEBUG;
+    # maybe we need to pull our local Perl modules from our VC working copy
+    push @INC, $Config->{'vcdir/lib'} if DEBUG;
 
-  # basic debugging output
-  debuggit("only print this if debugging is on");
-  debuggit(3 => "only print this if debugging is level 3 or higher");
+    # basic debugging output
+    debuggit("only print this if debugging is on");
+    debuggit(3 => "only print this if debugging is level 3 or higher");
 
-  # show off our formatting
-  my $var1 = 6;
-  my $var2;
-  my $var3 = " leading and trailing spaces   ";
-  # assuming debugging is enabled ...
-  debuggit("var1 is", $var1);   # var1 is 6
-  debuggit("var2 is", $var2);   # var2 is <<undef>>
-  debuggit("var3 is", $var3);   # var3 is << leading and trailing spaces   >>
-  # note that spaces between args, as well as final newlines, are provided automatically
+    # show off our formatting
+    my $var1 = 6;
+    my $var2;
+    my $var3 = " leading and trailing spaces   ";
+    # assuming debugging is enabled ...
+    debuggit("var1 is", $var1);   # var1 is 6
+    debuggit("var2 is", $var2);   # var2 is <<undef>>
+    debuggit("var3 is", $var3);   # var3 is << leading and trailing spaces   >>
+    # note that spaces between args, as well as final newlines, are provided automatically
 
-  # use "functions" in the debugging args list
-  my $var4 = { complex => 'hash', with => 'lots', of => 'stuff' };
-  # this will call Data::Dumper::Dumper() for you
-  # (even if you've never loaded Data::Dumper)
-  debuggit("var4 is", DUMP => $var4);
+    # use "functions" in the debugging args list
+    my $var4 = { complex => 'hash', with => 'lots', of => 'stuff' };
+    # this will call Data::Dumper::Dumper() for you
+    # (even if you've never loaded Data::Dumper)
+    debuggit("var4 is", DUMP => $var4);
 
-  # make your own function
-  Debuggit::add_func(CONFIG => 1, sub { my ($self, $var) = $_; return "$self var $var is $Config->{$var}" });
-  # and use it like so
-  debuggit(CONFIG => 'DB');     # CONFIG var DB is dev
+    # make your own function
+    Debuggit::add_func(CONFIG => 1,
+            sub { my ($self, $var) = $_; return (lc($self), 'var', $var, 'is', $Config->{$var}) });
+    # and use it like so
+    debuggit(CONFIG => 'DB');     # config var DB is dev
 
 
 =head1 DESCRIPTION
@@ -362,8 +363,41 @@ L<Debuggit::Manual/"Performance Considerations"> for full details.
 
 =head1 BUGS
 
+=over
+
+=item *
+
 Once you set C<DEBUG>, you can't change it.  Even if you try, you get the original value.  See
 L</DIAGNOSTICS>.
+
+=item *
+
+Doing:
+
+    debuggit(0 => "in production mode");
+
+never prints anything, even when C<DEBUG> is 0.  That's because C<debuggit> is guaranteed to be an
+empty function when debugging is turned off.
+
+=item *
+
+Doing:
+
+    debuggit($var, "is the value");
+
+is inherently dangerous.  If C<$var> is a positive integer, C<debuggit> would interpret it as a
+debug level, and not print it.  So, either do this:
+
+    debuggit(1 => $var, "is the value");
+
+or this:
+
+    debuggit("the value is", $var);
+
+Or, to look at it another way, you can pass a value as the first arg to print, or you can leave off
+a debugging level altogether, but don't try to do both at once.
+
+=back
 
 That's all I know of.  However, lacking omniscience, I welcome bug reports.
 
