@@ -1,6 +1,11 @@
 Revision history for Perl module Debuggit
 
 
+2.01_05 Feb 11, 2012
+    - even *more* proper handling of Pod::Coverage's absence
+    - fixed distro problem with new POD files not being included
+    - updated / extended all POD
+
 2.01_04 Feb 6, 2012
     - proper handling of Pod::Coverage's absence in t/pod_coverage.t
 
