@@ -10,6 +10,14 @@ if ($@)
     plan skip_all => "Memory::Usage required for testing memory usage";
 }
 
+# it appears that some CPAN Testers have Memory::Usage installed on non-Linux systems (?!?)
+# that doesn't work out so hot ... let's see if we can pre-empt that explosion
+unless (-d "/proc/$$")
+{
+    plan skip_all => "Memory::Usage doesn't work on systems without a /proc mount";
+}
+
+
 # Memory::Usage::state returns arrays with the following elements:
 #
 # 0 - timestamp
