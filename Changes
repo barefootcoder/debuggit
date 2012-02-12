@@ -1,6 +1,9 @@
 Revision history for Perl module Debuggit
 
 
+2.01_06 Feb 12, 2012
+    - more cautious handling of Memory::Usage to avoid non-Linux problems
+
 2.01_05 Feb 11, 2012
     - even *more* proper handling of Pod::Coverage's absence
     - fixed distro problem with new POD files not being included
