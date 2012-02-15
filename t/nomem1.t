@@ -11,19 +11,39 @@ if ($@)
 }
 
 
-my $gtop = GTop->new;
-my $before = $gtop->proc_mem($$)->size;
+# GTop doesn't interact with Test::More quite as badly as Memory::Usage (see t/nomem2.t), but it
+# still freaks out every once in a while.  Now running this one in a separate perl instance as well.
 
-eval
+my $proglet = <<'END';
+
+    use GTop;
+
+    my $gtop = GTop->new;
+    my $before = $gtop->proc_mem($$)->size;
+
+    eval
+    {
+        require Debuggit;
+        Debuggit->import();
+    };
+    my $err = $@;
+    my $after = $gtop->proc_mem($$)->size;
+
+    print "USAGE: ", $after - $before, "\n";
+
+END
+
+my $out = `$^X -e '$proglet'`;
+my ($type, $data) = $out =~ /^(\w+): (.*?)\n/;
+
+if (is $type, 'USAGE', "successfully imported module for memory test")
 {
-    require Debuggit;
-    Debuggit->import();
-};
-my $err = $@;
-my $after = $gtop->proc_mem($$)->size;
-
-ok(!$err, "successfully imported module for memory test");
-is($after - $before, 0, "loading module adds zero memory overhead");
+    is $data, '0', "loading module adds zero memory overhead" or diag $out;
+}
+else
+{
+    diag("error was: $data");
+}
 
 
 done_testing;
