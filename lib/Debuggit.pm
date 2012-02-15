@@ -148,7 +148,11 @@ sub import
 
     my $master_debug = eval "Debuggit::DEBUG();";
     my $debug_value = defined $opts{DEBUG} ? $opts{DEBUG} : defined $master_debug ? $master_debug : 0;
-    *Debuggit::DEBUG = sub () { $debug_value } unless defined $master_debug;
+    unless (defined $master_debug)
+    {
+        *Debuggit::DEBUG = sub () { $debug_value };
+        $master_debug = $debug_value;
+    }
 
     no strict 'refs';
     no warnings 'redefine';
@@ -167,8 +171,7 @@ sub import
 
     if ($debug_value)
     {
-        _setup_funcs();
-        *{ join('::', $caller_package, 'debuggit') } = \&debuggit;
+        _setup_funcs($master_debug, $debug_value, $caller_package);
     }
     else
     {
@@ -180,9 +183,28 @@ sub import
 
 sub _setup_funcs
 {
-    my ($debug_value) = @_;
+    my ($master_debug, $debug_value, $caller_package) = @_;
 
-    eval $debuggit unless Debuggit->can('debuggit');
+    no strict 'refs';
+    no warnings 'redefine';
+
+    # If our debug value is the same as the master debug value, we're just going to export our own
+    # debuggit() function out to the calling package.  In this way, we avoid unnecessary code
+    # duplication by every package having its own copy of debuggit().  However, if the two values
+    # _don't_ match, it means that we're doing an override, and that in turns means that we _have_
+    # to give the calling package its own copy.  This is because debuggit() is actually a closure,
+    # with the debug value stored in it.  If we have two different debug values (one for the program
+    # as a whole, and a different one for this particular package), we have to have two different
+    # debuggit() calls as well.
+    if ($debug_value == $master_debug)
+    {
+        *Debuggit::debuggit = eval $debuggit unless Debuggit->can('debuggit');
+        *{ join('::', $caller_package, 'debuggit') } = \&debuggit;
+    }
+    else
+    {
+        *{ join('::', $caller_package, 'debuggit') } = eval $debuggit;
+    }
 
     eval $add_func unless Debuggit->can('add_func');
 
@@ -230,12 +252,25 @@ C<debuggit>.  For examples of this, see L<Debuggit::Cookbook/"Adding to the debu
 
 BEGIN
 {
+    # This is an anonymous closure.  It has to be both of those things.
+    #   *   It has to be anonymous because it may be put into different packages depending on the
+    #       circumstances.  See the comments in _setup_funcs() for further details on that.
+    #   *   It has to be a closure because we want the debug value (against which we have to check
+    #       the first arg, if it's a positive integer), to be stored with the sub.  We in turn want
+    #       this for several reasons:
+    #       -   We have to reference the DEBUG value in the calling package.
+    #       -   If we determine that via reference, that works for most cases.  But in the case of
+    #           Moose classes, most of which are autocleaned, the DEBUG constant, which is just a
+    #           function, may well be gone by the time debuggit() runs.  If we were calling it
+    #           directly, autocleaning wouldn't keep that from working.  But calling by reference is
+    #           a whole different story.
+    #       -   So our best bet is to use a closure.  The $debug_value referred to below must exist
+    #           in the scope in which this is eval'ed.  Then that value gets wrapped in the closure
+    #           and it doesn't matter a whit if the function is autocleaned.
     $debuggit = q{
-        sub debuggit
+        sub
         {
-            no strict 'refs';
-            my $debug = join('::', scalar(caller), 'DEBUG');
-            return unless @_ > 0 && ($_[0] =~ /^\d+$/ ? shift : 1) <= $debug->();
+            return unless @_ > 0 && ($_[0] =~ /^\d+$/ ? shift : 1) <= $debug_value;
             $Debuggit::output->($Debuggit::formatter->(Debuggit::_process_funcs(@_)));
         }
     };

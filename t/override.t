@@ -4,7 +4,7 @@ use warnings;
 use Test::More      0.88                            ;
 use Test::Output    0.16                            ;
 
-use Debuggit;
+use Debuggit DEBUG => 1;
 
 
 eval {
