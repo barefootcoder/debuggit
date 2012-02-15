@@ -146,7 +146,7 @@ sub import
     my ($pkg, %opts) = @_;
     my $caller_package = $opts{PolicyModule} ? caller(1) : caller;
 
-    my $master_debug = eval "Debuggit::DEBUG();";
+    my $master_debug = eval "Debuggit::DEBUG()";
     my $debug_value = defined $opts{DEBUG} ? $opts{DEBUG} : defined $master_debug ? $master_debug : 0;
     unless (defined $master_debug)
     {
@@ -157,7 +157,7 @@ sub import
     no strict 'refs';
     no warnings 'redefine';
 
-    my $caller_value = eval "${caller_package}::DEBUG();";
+    my $caller_value = eval "${caller_package}::DEBUG()";
     if (defined $caller_value)
     {
         warn("Cannot redefine DEBUG; original value of $caller_value is used") if $debug_value ne $caller_value;
