@@ -12,7 +12,7 @@ if ($@)
 
 # it appears that some CPAN Testers have Memory::Usage installed on non-Linux systems (?!?)
 # that doesn't work out so hot ... let's see if we can pre-empt that explosion
-unless (-d "/proc/$$")
+unless (-r "/proc/$$/statm")
 {
     plan skip_all => "Memory::Usage doesn't work on systems without a /proc mount";
 }
