@@ -1,9 +1,12 @@
 Revision history for Perl module Debuggit
 
 
+2.01_08 Feb 16, 2012
+    - still getting Memory::Usage failures from BSD; tightening up t/nomem2.t
+
 2.01_07 Feb 15, 2012
     - fixed the problem with Moose classes autocleaning DEBUG
-	- refactored t/nomem1.t to match t/nomem2.t
+    - refactored t/nomem1.t to match t/nomem2.t
 
 2.01_06 Feb 12, 2012
     - more cautious handling of Memory::Usage to avoid non-Linux problems
