@@ -389,7 +389,7 @@ get the original value regardless.  At least this way you'll be forewarned.
 
 =head1 PERFORMANCE
 
-Debuggit is designed to be left in your code, even when running in productionn environments.
+Debuggit is designed to be left in your code, even when running in production environments.
 Because of this, it needs to disappear entirely when debugging is turned off.  It can achieve this
 unlikely goal because of the use of a compile-time constant.  Please see
 L<Debuggit::Manual/"Performance Considerations"> for full details.

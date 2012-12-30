@@ -23,10 +23,10 @@ You know, documentation is a double-edged sword.  Put too little, and no one wil
 because it's poorly documented.  Put too much, and no one will use your module because it I<must> be
 too complex ... I mean, just look at how much documentation it takes to describe it!
 
-Well, I happen to actually I<like> writing documentation, so there's a healthy chunk of it here.
-But let me assure you that this is just because I'm being thorough, not because this module is
-complex.  It's actually almost ridiculously simple at its core--in fact there's about 4 to 5 times
-more POD than code in this distro.
+Well, it so happens that I actually I<like> writing documentation, so there's a healthy chunk of it
+here.  But let me assure you that this is just because I'm being thorough, not because this module
+is complex.  It's actually almost ridiculously simple at its core--in fact there's about 4 to 5
+times more POD than code in this distro.
 
 You should read this documentation in 3 stages:
 
