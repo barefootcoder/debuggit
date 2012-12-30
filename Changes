@@ -1,16 +1,21 @@
 Revision history for Perl module Debuggit
 
 
+2.03 Dec 30, 2012
+    - very slight doco tweaks
+    - fixed Module::Install version as per Miyagawa
+        (http://weblog.bulknews.net/post/33907905561/do-not-ship-modules-with-module-install-1-04)
+
 2.02 Feb 19, 2012
     - fixed annoying "redefined" warnings
     - fixed annoying "naked subroutines" test failures for callers of Debuggit
-		- proper handling of Pod::Coverage's absence in t/pod_coverage.t
+        - proper handling of Pod::Coverage's absence in t/pod_coverage.t
     - can now override the system wide DEBUG for a specific module
     - adding another test to insure no additional memory is used
-		- refactored t/nomem1.t to match t/nomem2.t
-		- more cautious handling of Memory::Usage to avoid non-Linux problems
+        - refactored t/nomem1.t to match t/nomem2.t
+        - more cautious handling of Memory::Usage to avoid non-Linux problems
     - updated / extended all POD
-		- now have main POD, manual, and cookbook
+        - now have main POD, manual, and cookbook
     - fixed the problem with Moose classes autocleaning DEBUG
 
 2.01 Jul 29, 2011
