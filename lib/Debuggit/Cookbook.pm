@@ -21,7 +21,7 @@ More examples from users are welcomed.
 
 
 
-=head1 Adding to the debugging output
+=head1 Wrapping the debugging output
 
 You can take advantage of the fact that the default formatter is stored as
 C<Debuggit::default_formatter> to do some clever things.
@@ -137,7 +137,7 @@ to force C<DEBUG> to 1.  That's easy:
     use Debuggit ();
     use Test::More;
 
-    $Debuggit::output = sub { diag @_ };        # nicer with Test::More et al
+    $Debuggit::output = sub { diag @_ };        # nicer with TAP
 
     sub import
     {

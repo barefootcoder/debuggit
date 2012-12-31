@@ -141,7 +141,7 @@ part, this will just DTRT (Do The Right Thing) and you won't have to worry about
 
 =head1 The debuggit function
 
-This is the main event; the raison d'etre of this module.  C<debuggit> is very simple to use, but a
+This is the main event; the raison d'etre of the module.  C<debuggit> is very simple to use, but a
 lot of flexibility has been built into it as well.  Read on to see how to adjust the various aspects
 of C<debuggit>.
 
@@ -229,7 +229,7 @@ output goes">.
 =head4 Debuggit::default_formatter(@_)
 
 This function is what C<$formatter> (see above) is set to unless (and until) you change it.  It can
-also be called from your own formatter function (see L<Debuggit::Cookbook/"Adding to the debugging
+also be called from your own formatter function (see L<Debuggit::Cookbook/"Wrapping the debugging
 output">).  Its purpose is to turn the arguments you pass to C<debuggit> into a formatted line.
 This line is then sent to the function stored in C<$output>.
 
@@ -268,7 +268,7 @@ something like this:
 
     local $Debuggit::output = sub { print @_ };
 
-allows you to print debugging messages to stdout rather than stderr (although I'm not sure why you'd
+allows you to print debugging messages to STDOUT rather than STDERR (although I'm not sure why you'd
 want to).  Like with C<$formatter>, the use of C<local> allows you to change the output function
 temporarily (i.e.  until the end of the enclosing block).
 
@@ -301,12 +301,12 @@ and over again:
 
     debuggit("after bmoogling", ref($obj) . '->foo =', $obj->{'_data'}->{'foo'});
 
-By the time you've typed that exact pattern 20 or 30 times, you may be getting tired of it.  What if
+By the time you've typed that exact template 20 or 30 times, you may be getting tired of it.  What if
 you could do something like this instead?
 
     debuggit("after bmoogling", OBJDATA => ($obj, 'foo'));
 
-(Note that the fat comma is not required (see L</STYLE>), nor are the extra parends around $obj and
+(Note that the fat comma is not required (see L</"Style Considerations">), nor are the extra parends around $obj and
 'foo'.  But they make it more obvious what's going on here, in your author's humble opinion.)
 
 If you could do that, that would be much nicer, yes?  Well, you can:
@@ -599,7 +599,8 @@ If you use this style:
 then, assuming DEBUG is set to 0 (or 1, even), it is indeed 100% free.  In fact, the test suite
 actually uses L<B::Deparse> to insure that the above statement produces no actual code when C<DEBUG
 == 0>, and if you happen to have L<GTop> or L<Memory::Usage> (or both) installed, the test suite
-will also verify that C<use Debuggit> does not add anything to your program's memory footprint.
+will also verify that C<use Debuggit> does not add anything to your program's memory footprint
+(again, when C<DEBUG == 0>).
 
 This style, however:
 

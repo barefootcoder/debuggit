@@ -18,7 +18,7 @@ Debuggit - A fairly simplistic debug statement handler
 
 =head1 SYNOPSIS
 
-    use Debuggit(DEBUG => 1);
+    use Debuggit DEBUG => 1;
 
     # say you have a global hashref for your site configuration
     # (not to imply that global vars are good)
@@ -84,7 +84,7 @@ Later ...
     use strict;
     use warnings;
 
-    use Debuggit(DEBUG => 2);
+    use Debuggit DEBUG => 2;
 
 
     my $var = 6;
@@ -242,7 +242,7 @@ L<Debuggit::Manual/"The debuggit function">.
 =head2 default_formatter
 
 This is what C<debuggit> is set to initially.  You can call it directly if you want to "wrap"
-C<debuggit>.  For examples of this, see L<Debuggit::Cookbook/"Adding to the debugging output">.
+C<debuggit>.  For examples of this, see L<Debuggit::Cookbook/"Wrapping the debugging output">.
 
 =cut
 
@@ -391,12 +391,12 @@ get the original value regardless.  At least this way you'll be forewarned.
 
 Debuggit is designed to be left in your code, even when running in production environments.
 Because of this, it needs to disappear entirely when debugging is turned off.  It can achieve this
-unlikely goal because of the use of a compile-time constant.  Please see
+unlikely goal via the use of a compile-time constant.  Please see
 L<Debuggit::Manual/"Performance Considerations"> for full details.
 
 
 
-=head1 BUGS
+=head1 BUGS and CAVEATS
 
 =over
 
@@ -431,6 +431,33 @@ or this:
 
 Or, to look at it another way, you can pass a value as the first arg to print, or you can leave off
 a debugging level altogether, but don't try to do both at once.
+
+=item *
+
+Doing:
+
+    my $var1 = "DUMP";
+    my $var2 = "stuff";
+    debuggit(1 => "vars are", $var1, $var2);
+
+is equivalent to:
+
+    debuggit(1 => "vars are", DUMP => $var2);
+
+which is probably not going to do what you want, assuming the default functions are still in place.
+See L<Debuggit::Manual/"IMPORTANT CAVEAT!"> for full details.
+
+=item *
+
+Doing:
+
+    debuggit(2 => "first thousand elements:", @array[0..999]);
+
+is likely going to have a performance impact even when debugging is off.  Instead, do:
+
+    debuggit("first thousand elements:", @array[0..999]) if DEBUG >= 2;
+
+See L<Debuggit::Manual/"Style Considerations"> for another example and details on the problem.
 
 =back
 
