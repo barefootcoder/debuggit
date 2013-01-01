@@ -171,7 +171,7 @@ sub import
 
     if ($debug_value)
     {
-        _setup_funcs($master_debug, $debug_value, $caller_package);
+        _setup_funcs($master_debug, $debug_value, $caller_package, $opts{DataPrinter});
     }
     else
     {
@@ -183,7 +183,7 @@ sub import
 
 sub _setup_funcs
 {
-    my ($master_debug, $debug_value, $caller_package) = @_;
+    my ($master_debug, $debug_value, $caller_package, $data_printer) = @_;
 
     no strict 'refs';
     no warnings 'redefine';
@@ -209,12 +209,24 @@ sub _setup_funcs
     eval $add_func unless Debuggit->can('add_func');
 
     # create default function
-    add_func(DUMP => 1, sub
+    if ($data_printer)
     {
-        require Data::Dumper;
-        shift;
-        return Data::Dumper::Dumper(shift);
-    });
+        add_func(DUMP => 1, sub
+        {
+            require Data::Printer;
+            shift;
+            return Data::Printer::p(shift, colored => 1, hash_separator => ' => ', print_escapes => 1);
+        });
+    }
+    else
+    {
+        add_func(DUMP => 1, sub
+        {
+            require Data::Dumper;
+            shift;
+            return Data::Dumper::Dumper(shift);
+        });
+    }
 }
 
 
