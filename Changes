@@ -1,6 +1,12 @@
 Revision history for Perl module Debuggit
 
 
+2.03_01 Jan 1, 2013
+    - more doco tweaks
+    - added support for Data::Printer via a new config option
+    - added configure_requires for YAML::Tiny
+        - should fix UNKNOWN reports on CPAN Testers
+
 2.03 Dec 30, 2012
     - very slight doco tweaks
     - fixed Module::Install version as per Miyagawa

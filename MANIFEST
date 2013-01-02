@@ -1,4 +1,5 @@
 Changes
+Debuggit-2.03_01.tar.gz
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
@@ -21,6 +22,8 @@ MYMETA.json
 MYMETA.yml
 README
 t/00.load.t
+t/data/hash_for_dumping
+t/data_printer.t
 t/default_funcs.t
 t/fallthrough.t
 t/format.t
