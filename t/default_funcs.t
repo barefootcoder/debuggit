@@ -1,6 +1,8 @@
 use strict;
 use warnings;
 
+use IPC::System::Simple     qw<capturex>            ;
+
 use Test::More      0.88                            ;
 use Test::Output    0.16    qw<:tests :functions>   ;
 use Test::Exception 0.31                            ;
@@ -25,7 +27,7 @@ my $cmd = <<'END';
 END
 
 # get Dumper output without actually loading Data::Dumper
-my $dump = `$^X -e '$cmd'`;
+my $dump = capturex($^X, '-e', $cmd);
 # make sure we actually _got_ some output
 isnt $dump, '', "test dump returned some output";
 # and make sure we didn't actually load Data::Dumper
