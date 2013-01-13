@@ -487,7 +487,7 @@ Debuggit is on GitHub at barefootcoder/debuggit.  Feel free to fork and submit p
 that I develop via TDD (Test-Driven Development), so a patch that includes a failing test is much
 more likely to get accepted (or least likely to get accepted more quickly).
 
-If you just want to report a problem or suggest a feature, that's okay too.  You can create an issue
+If you just want to report a problem or request a feature, that's okay too.  You can create an issue
 on GitHub, or a bug in CPAN's RT (at http://rt.cpan.org).  Or just send an email to
 bug-Debuggit@rt.cpan.org.
 
