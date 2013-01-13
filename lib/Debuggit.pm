@@ -50,6 +50,10 @@ Debuggit - A fairly simplistic debug statement handler
     # (even if you've never loaded Data::Dumper)
     debuggit("var4 is", DUMP => $var4);
 
+    # or maybe you prefer Data::Printer instead?
+    use Debuggit DEBUG => 1, DataPrinter => 1;
+    debuggit("var4 is", DUMP => $var4);
+
     # make your own function
     Debuggit::add_func(CONFIG => 1,
             sub { my ($self, $var) = $_; return (lc($self), 'var', $var, 'is', $Config->{$var}) });

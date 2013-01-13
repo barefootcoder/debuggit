@@ -352,6 +352,27 @@ production code (as it can add anywhere from 300Kb to nearly 3Mb to your memory 
 on the version of Perl and the version of C<Data::Dumper>).
 
 
+=head2 Using Data::Printer instead
+
+Of course, maybe you don't like Data::Dumper.  Maybe you prefer the shiny new L<Data::Printer>.
+"Get with the times, silly Debuggit man!" you cry.  Never fear:
+
+    use Debuggit DataPrinter => 1, DEBUG => 1;
+    debuggit("my hash:", DUMP => \%my_hash);
+
+When you do this, it will send the single next argument (which means you have to use references as
+opposed to relying on Data::Printer's C<p()> prototype) to Data::Printer::p() instead of
+Data::Dumper::Dumper().  When it does so, it will use the following parameters:
+
+    colored => 1, hash_separator => ' => ', print_escapes => 1
+
+because those are the parameters I like.  If you like different parameters, feel free to make your own version of C<DUMP> using C<add_func> (see below).
+
+This is the perfect sort of thing to add to a L<policy module|/"Policy Modules">.  There are some
+examples of just that in the
+L<cookbook|Debuggit::Cookbook/"Using Data::Printer instead of Data::Dumper">.
+
+
 =head2 Adding new functions
 
 =head4 Debuggit::add_func(FUNC_NAME => #, sub { ... });

@@ -145,6 +145,70 @@ to force C<DEBUG> to 1.  That's easy:
     }
 
 
+=head2 Using Data::Printer instead of Data::Dumper
+
+If you prefer L<Data::Printer> over L<Data::Dumper>, you almost certainly prefer it everywhere.
+This is the perfect sort of thing to put in a policy module:
+
+    package MyPrettyDebuggit;
+
+    use Debuggit ();
+
+    sub import
+    {
+        Debuggit->import(PolicyModule => 1, DataPrinter => 1);
+    }
+
+If you'd like to fiddle with the default parameters to Data::Printer, do it this way instead:
+
+    package MyPrettyDebuggit;
+
+    use Debuggit ();
+
+    sub import
+    {
+        Debuggit->import(PolicyModule => 1);
+
+        Debuggit::add_func(DUMP => 1, sub
+        {
+            require Data::Printer;
+            shift;
+            return Data::Printer::p(shift, colored => 1, quote_keys => 1);
+        });
+    }
+
+Note the following things about the latter example:
+
+=over
+
+=item *
+
+You B<must> put the call to C<add_func()> inside the C<import>.  That's because
+C<Debuggit::add_func> doesn't even exist until after C<Debuggit::import> has been called.  Which is,
+in turn, so that it won't hang around taking up memory when debugging is turned off.  Also, don't
+forget you have to qualify C<add_func> with the full package name, as it isn't exported (and we
+aren't importing anyway).
+
+=item *
+
+We didn't bother passing C<DataPrinter> to Debuggit this time.  All that does is set up the initial
+definition of the C<DUMP> function, and we're just going to override that anyway, so why bother?
+
+=item *
+
+Since we're completely replacing Debuggit's idea of what Data::Printer should output, anything that
+would normally be set by passing C<DataPrinter> but isn't mentioned by our replacement function will
+have normal Data::Printer default values.  For instance, in the example above, C<hash_separator>
+would go back to being spaces.
+
+=item *
+
+Remember that Debuggit is dealing only with strings until the very end, and then it uses its own
+output function.  Thus, setting Data::Printer's C<output> parameter wouldn't have any effect.
+
+=back
+
+
 
 =head1 Putting it all together
 
