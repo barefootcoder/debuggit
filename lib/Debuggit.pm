@@ -219,7 +219,7 @@ sub _setup_funcs
         {
             require Data::Printer;
             shift;
-            return Data::Printer::p(shift, colored => 1, hash_separator => ' => ', print_escapes => 1);
+            return &Data::Printer::p(shift, colored => 1, hash_separator => ' => ', print_escapes => 1);
         });
     }
     else

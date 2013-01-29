@@ -3,6 +3,7 @@ use warnings;
 
 use Test::More      0.88                            ;
 use Test::Output    0.16    qw<:tests :functions>   ;
+use Test::Command   0.08    ()                      ;
 use Test::Exception 0.31                            ;
 
 BEGIN
@@ -12,6 +13,10 @@ BEGIN
 }
 
 use Debuggit(DataPrinter => 1, DEBUG => 2);
+
+# using Test::Output and Test::Command together is *SUCH* a pain in the ass ...
+#*cmd_stderr_like = \&Test::Command::stderr_like;
+*cmd_stderr_unlike = \&Test::Command::stderr_unlike;
 
 
 open(IN, "t/data/hash_for_dumping") or die("# cannot read test data");
@@ -40,6 +45,18 @@ throws_ok { print Data::Printer::p() } qr/^Undefined subroutine &Data::Printer::
 
 my $output = 'test is';
 stderr_is { debuggit(2 => $output, DUMP => $testhash); } "$output $dump\n", "got DUMP output";
+
+
+# make sure it still works even after loading Data::Printer directly
+$cmd = <<'END';
+	use strict;
+	use warnings;
+	use Data::Printer;
+	use Debuggit DEBUG => 2, DataPrinter => 1;
+
+	debuggit(2 => DUMP => { this => 'hash' });
+END
+cmd_stderr_unlike("$^X -e '$cmd'", qr/type.*must be one of.*not/i, "successfully circumvented prototype");
 
 
 done_testing;
