@@ -47,14 +47,19 @@ my $output = 'test is';
 stderr_is { debuggit(2 => $output, DUMP => $testhash); } "$output $dump\n", "got DUMP output";
 
 
+# if you call it twice for the same package, make sure the Data::Dumper version doesn't come back
+eval 'use Debuggit DEBUG => 2';
+stderr_is { debuggit(2 => $output, DUMP => $testhash); } "$output $dump\n", "still using Data::Printer after reimport";
+
+
 # make sure it still works even after loading Data::Printer directly
 $cmd = <<'END';
-	use strict;
-	use warnings;
-	use Data::Printer;
-	use Debuggit DEBUG => 2, DataPrinter => 1;
+    use strict;
+    use warnings;
+    use Data::Printer;
+    use Debuggit DEBUG => 2, DataPrinter => 1;
 
-	debuggit(2 => DUMP => { this => 'hash' });
+    debuggit(2 => DUMP => { this => 'hash' });
 END
 cmd_stderr_unlike("$^X -e '$cmd'", qr/type.*must be one of.*not/i, "successfully circumvented prototype");
 

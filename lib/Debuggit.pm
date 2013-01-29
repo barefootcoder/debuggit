@@ -210,26 +210,29 @@ sub _setup_funcs
         *{ join('::', $caller_package, 'debuggit') } = eval $debuggit;
     }
 
-    eval $add_func unless Debuggit->can('add_func');
+    unless (Debuggit->can('add_func'))
+    {
+        eval $add_func;
 
-    # create default function
-    if ($data_printer)
-    {
-        add_func(DUMP => 1, sub
+        # create default function
+        if ($data_printer)
         {
-            require Data::Printer;
-            shift;
-            return &Data::Printer::p(shift, colored => 1, hash_separator => ' => ', print_escapes => 1);
-        });
-    }
-    else
-    {
-        add_func(DUMP => 1, sub
+            add_func(DUMP => 1, sub
+            {
+                require Data::Printer;
+                shift;
+                return &Data::Printer::p(shift, colored => 1, hash_separator => ' => ', print_escapes => 1);
+            });
+        }
+        else
         {
-            require Data::Dumper;
-            shift;
-            return Data::Dumper::Dumper(shift);
-        });
+            add_func(DUMP => 1, sub
+            {
+                require Data::Dumper;
+                shift;
+                return Data::Dumper::Dumper(shift);
+            });
+        }
     }
 }
 
