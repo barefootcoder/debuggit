@@ -1,6 +1,9 @@
 use strict;
 use warnings;
 
+use lib 't/lib';
+use TestCmd;
+
 use Test::More      0.88                            ;
 
 
@@ -74,7 +77,7 @@ my $proglet = <<'END';
 
 END
 
-my $out = `$^X -e '$proglet'`;
+my $out = cmd_stdout({ perl => $proglet });
 my ($type, $data) = $out =~ /^(\w+): (.*?)\n/;
 
 if (is $type, 'USAGE', "successfully imported module for memory test")
