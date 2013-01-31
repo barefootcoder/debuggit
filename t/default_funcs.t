@@ -38,6 +38,37 @@ throws_ok { print Data::Dumper::Dumper() } qr/^Undefined subroutine &Data::Dumpe
 my $output = 'test is';
 stderr_is { debuggit(2 => $output, DUMP => $struct); } "$output $dump\n", "got DUMP output";
 
+
+# okay, now we're going to build ourselves a hash
+# and we're going to keep adding single-letter keys to it until we find a hash that returns its keys
+# in unsorted order
+# probably this won't take very many keys
+# but, in the (extremely) unlikely event that we run out of letters before we find one, we'll bail
+# we go to this trouble in order to verify that our use of DD is producing sorted keys
+# and we do _that_ because, if we don't, we're bound to get random failures from our installers
+
+SKIP:
+{
+    my %hash = ( a => 1, b => 1 );
+    my $letter = "b";
+    while ( join('', keys %hash) eq join('', sort keys %hash) )
+    {
+        skip "can't generate unsorted hash", 1 if $letter eq 'z';
+        $hash{ ++$letter } = 1;
+    }
+
+    my $regex = join("\n", map { '^\s*' . "'$_'" . '.*?$' } sort keys %hash);
+    stderr_like { debuggit(2 => DUMP => \%hash); } qr/$regex/m, "Data::Dumper is sorting its keys";
+}
+
+# also, make sure we're not leaving hashkeys in DD sorted for everyone else, whether they like it
+# or not ...
+isnt $Data::Dumper::Sortkeys, 1, "properly cleaning up after ourselves with DD";
+
+
+# test removal
+# (this has to be done last, obviously)
+
 ok Debuggit::remove_func('DUMP'), "remove func successful";
 stderr_is { debuggit(2 => $output, DUMP => $struct); } "$output DUMP $struct\n", "removed default func";
 

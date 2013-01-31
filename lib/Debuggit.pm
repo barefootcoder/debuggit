@@ -230,6 +230,7 @@ sub _setup_funcs
             {
                 require Data::Dumper;
                 shift;
+                local $Data::Dumper::Sortkeys = 1;
                 return Data::Dumper::Dumper(shift);
             });
         }
