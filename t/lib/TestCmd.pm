@@ -1,15 +1,15 @@
 package TestCmd;
 
 use Test::Command   0.08    ()                      ;
-use File::Temp		0.22	('tempfile')			;
-use Monkey::Patch	0.03	('patch_package')		;
+use File::Temp      0.22    ('tempfile')            ;
+use Monkey::Patch   0.03    ('patch_package')       ;
 
 
 use base 'Exporter';
 our @EXPORT = qw<
-	cmd_stdout cmd_stdout_is cmd_stdout_isnt cmd_stdout_like cmd_stdout_unlike
-	cmd_stderr cmd_stderr_is cmd_stderr_isnt cmd_stderr_like cmd_stderr_unlike
-	cmd_exit_is
+    cmd_stdout cmd_stdout_is cmd_stdout_isnt cmd_stdout_like cmd_stdout_unlike
+    cmd_stderr cmd_stderr_is cmd_stderr_isnt cmd_stderr_like cmd_stderr_unlike
+    cmd_exit_is
 >;
 
 
@@ -34,27 +34,27 @@ our @EXPORT = qw<
 # this one we have to monkey patch
 our $p = patch_package 'Test::Command' => _run_cmd => sub
 {
-	my ($orig, $cmd) = @_;
+    my ($orig, $cmd) = @_;
 
-	# Test::Command normally takes its commands in one of two forms:
-	# 	*	'ls /tmp'			-	string which is passed to the shell
-	# 	*	[ 'ls', '/tmp' ]	-	command-line args; circumvents the shell
-	# This monkey-patch allows a third form:
-	# 	*	{ perl => $prog }	-	a bit of Perl code which is run in a separate perl interpreter
-	# This will use $^X as the Perl command, so it should get you the same Perl that your test runs
-	# in. It takes your $prog and puts it in a tempfile, then uses -f (instead of -e).  This avoida
-	# any strange quoting issues (even on Windows).  Then it passes the command line to the system,
-	# bypassing the shell.
+    # Test::Command normally takes its commands in one of two forms:
+    #   *   'ls /tmp'           -   string which is passed to the shell
+    #   *   [ 'ls', '/tmp' ]    -   command-line args; circumvents the shell
+    # This monkey-patch allows a third form:
+    #   *   { perl => $prog }   -   a bit of Perl code which is run in a separate perl interpreter
+    # This will use $^X as the Perl command, so it should get you the same Perl that your test runs
+    # in. It takes your $prog and puts it in a tempfile, then uses -f (instead of -e).  This avoida
+    # any strange quoting issues (even on Windows).  Then it passes the command line to the system,
+    # bypassing the shell.
 
-	if (ref $cmd eq 'HASH')
-	{
-		my $proglet = $cmd->{'perl'} or die("must provide Perl program as a string with the key 'perl'");
-		my ($fh, $tmpfile) = tempfile( UNLINK => 1 );
-		print $fh $proglet;
-		close($fh);
-		$cmd = [ $^X, '-f', $tmpfile ];
-	}
-	$orig->($cmd);
+    if (ref $cmd eq 'HASH')
+    {
+        my $proglet = $cmd->{'perl'} or die("must provide Perl program as a string with the key 'perl'");
+        my ($fh, $tmpfile) = tempfile( UNLINK => 1 );
+        print $fh $proglet;
+        close($fh);
+        $cmd = [ $^X, '-f', $tmpfile ];
+    }
+    $orig->($cmd);
 };
 
 
@@ -63,18 +63,18 @@ our $p = patch_package 'Test::Command' => _run_cmd => sub
 
 sub cmd_stdout
 {
-	my ($cmd) = @_;
+    my ($cmd) = @_;
 
-	my $result = _get_result($cmd);
-	return _slurp($result->{'stdout_file'});
+    my $result = _get_result($cmd);
+    return _slurp($result->{'stdout_file'});
 }
 
 sub cmd_stderr
 {
-	my ($cmd) = @_;
+    my ($cmd) = @_;
 
-	my $result = _get_result($cmd);
-	return _slurp($result->{'stderr_file'});
+    my $result = _get_result($cmd);
+    return _slurp($result->{'stderr_file'});
 }
 
 
