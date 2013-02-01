@@ -1,6 +1,15 @@
 Revision history for Perl module Debuggit
 
 
+2.03_03 Jan 31, 2013
+	- DUMP function (with Data::Dumper) now sorts hash keys
+	- added the POD for DataPrinter option
+	- fixed a bug with Data::Printer's prototypes
+	- fixed a bug where Data::Dumper could come back and clobber Data::Printer
+	- fixed testing bug where using perl -e on Windows *still* didn't work
+	- fixed testing bug due to not sorting hash keys with Data::Dumper
+	- more minor doco tweaks
+
 2.03_02 Jan 11, 2013
     - revamped default_funcs.t to work on Windows
 

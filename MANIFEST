@@ -29,6 +29,7 @@ t/fallthrough.t
 t/format.t
 t/funcs.t
 t/lib/MyDebuggit.pm
+t/lib/TestCmd.pm
 t/lib/WithPod.pm
 t/lib/WithPodDebugOn.pm
 t/nocode.t
