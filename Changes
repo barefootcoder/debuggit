@@ -1,6 +1,9 @@
 Revision history for Perl module Debuggit
 
 
+2.03_04 Feb 1, 2013
+    - forgot to add Monkey::Patch under test_requires
+
 2.03_03 Jan 31, 2013
     - DUMP function (with Data::Dumper) now sorts hash keys
     - added the POD for DataPrinter option

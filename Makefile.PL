@@ -6,6 +6,7 @@ all_from        'lib/Debuggit.pm';
 
 # Specific dependencies
 test_requires   'B::Deparse'            => '0.89';
+test_requires   'Monkey::Patch'         => '0.03';
 test_requires   'Test::More'            => '0.88';
 test_requires   'Test::Warn'            => '0.23';
 test_requires   'Test::Output'          => '0.16';
