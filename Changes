@@ -1,6 +1,9 @@
 Revision history for Perl module Debuggit
 
 
+2.03_05 Feb 3, 2013
+    - forgot to sort Data::Dumper hash keys in my control test
+
 2.03_04 Feb 1, 2013
     - forgot to add Monkey::Patch under test_requires
 
