@@ -42,9 +42,9 @@ our $p = patch_package 'Test::Command' => _run_cmd => sub
     # This monkey-patch allows a third form:
     #   *   { perl => $prog }   -   a bit of Perl code which is run in a separate perl interpreter
     # This will use $^X as the Perl command, so it should get you the same Perl that your test runs
-    # in. It takes your $prog and puts it in a tempfile, then uses -f (instead of -e).  This avoids
-    # any strange quoting issues (even on Windows).  Then it passes the command line to the system,
-    # bypassing the shell.
+    # in. It takes your $prog and puts it in a tempfile, then uses the tempfile as a script (instead
+    # of using -e).  This avoids any strange quoting issues (even on Windows).  Then it passes the
+    # command line to the system, bypassing the shell.
 
     if (ref $cmd eq 'HASH')
     {
@@ -52,7 +52,7 @@ our $p = patch_package 'Test::Command' => _run_cmd => sub
         my ($fh, $tmpfile) = tempfile( UNLINK => 1 );
         print $fh $proglet;
         close($fh);
-        $cmd = [ $^X, '-f', $tmpfile ];
+        $cmd = [ $^X, $tmpfile ];
     }
     $orig->($cmd);
 };
