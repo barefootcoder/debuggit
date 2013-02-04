@@ -19,6 +19,7 @@ my $cmd = <<'END';
     use strict;
     use warnings;
     use Data::Dumper;
+    $Data::Dumper::Sortkeys = 1;
 
     open(IN, "t/data/hash_for_dumping") or die("# cannot read test data");
     my $struct = eval do { local $/; <IN> };
