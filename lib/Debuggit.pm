@@ -3,7 +3,7 @@ package Debuggit;
 use strict;
 use warnings;
 
-our $VERSION = '2.03_05';
+our $VERSION = '2.04';
 
 
 #################### main pod documentation begin ###################

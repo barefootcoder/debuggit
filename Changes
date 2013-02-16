@@ -1,29 +1,17 @@
 Revision history for Perl module Debuggit
 
 
-2.03_05 Feb 3, 2013
-    - forgot to sort Data::Dumper hash keys in my control test
-
-2.03_04 Feb 1, 2013
-    - forgot to add Monkey::Patch under test_requires
-
-2.03_03 Jan 31, 2013
-    - DUMP function (with Data::Dumper) now sorts hash keys
-    - added the POD for DataPrinter option
-    - fixed a bug with Data::Printer's prototypes
-    - fixed a bug where Data::Dumper could come back and clobber Data::Printer
-    - fixed testing bug where using perl -e on Windows *still* didn't work
-    - fixed testing bug due to not sorting hash keys with Data::Dumper
-    - more minor doco tweaks
-
-2.03_02 Jan 11, 2013
-    - revamped default_funcs.t to work on Windows
-
-2.03_01 Jan 1, 2013
+2.04 Feb 15, 2013
     - added support for Data::Printer via a new config option
-    - more doco tweaks
-    - added configure_requires for YAML::Tiny
-        - should fix UNKNOWN reports on CPAN Testers
+    - DUMP function (with Data::Dumper) now sorts hash keys
+    - doco for DataPrinter option, plus more doco tweaks
+    - fixed many distribution/testing errors:
+        - added configure_requires for YAML::Tiny
+            - should fix UNKNOWN reports on CPAN Testers
+        - revamped default_funcs.t to work on Windows
+        - added testing Perl snippet framework to work across Windows/Linux
+            - working with DANBOO to get this stuff into Test::Command
+        - now sorting Data::Dumper hash keys in all tests too
 
 2.03 Dec 30, 2012
     - very slight doco tweaks
