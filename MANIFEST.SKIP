@@ -5,3 +5,4 @@ bench.t
 .*\.swp
 blib/
 \.git/
+MYMETA.*

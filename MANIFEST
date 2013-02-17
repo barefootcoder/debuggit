@@ -18,8 +18,6 @@ Makefile.PL
 MANIFEST
 META.json
 META.yml
-MYMETA.json
-MYMETA.yml
 README
 t/00.load.t
 t/data/hash_for_dumping
