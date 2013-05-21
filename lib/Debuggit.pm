@@ -144,13 +144,13 @@ Only L</debuggit> is exported.
 ##
 #####################################################################
 
+
 sub import
 {
     my ($pkg, %opts) = @_;
     my $caller_package = $opts{PolicyModule} ? caller(1) : caller;
 
     $debuggit_alias = $opts{Alias} if defined $opts{Alias};
-#    say $debug
 
     my $master_debug = eval "Debuggit::DEBUG()";
     my $debug_value = defined $opts{DEBUG} ? $opts{DEBUG} : defined $master_debug ? $master_debug : 0;
