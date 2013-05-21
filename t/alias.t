@@ -1,7 +1,6 @@
 my $DESC = '';
 
 ## Without Alias
-package WithoutAlias;
 use Debuggit;
 
 use strict;

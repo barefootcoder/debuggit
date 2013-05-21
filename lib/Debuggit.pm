@@ -110,7 +110,7 @@ This POD explains just the basics of using C<Debuggit>.  For full details, see L
 ####
 #################### main pod documentation end ###################
 
-my ($debuggit, $add_func, $debuggit_alias);
+my ($debuggit, $add_func);
 
 
 #####################################################################
@@ -156,8 +156,6 @@ sub import
     my ($pkg, %opts) = @_;
     my $caller_package = $opts{PolicyModule} ? caller(1) : caller;
 
-    $debuggit_alias = $opts{Alias} if defined $opts{Alias};
-
     my $master_debug = eval "Debuggit::DEBUG()";
     my $debug_value = defined $opts{DEBUG} ? $opts{DEBUG} : defined $master_debug ? $master_debug : 0;
     unless (defined $master_debug)
@@ -188,9 +186,13 @@ sub import
     else
     {
         *{ join('::', $caller_package, 'debuggit') } = sub {};
-        *{ join('::', $caller_package, $debuggit_alias) } = sub {} 
-            if $debuggit_alias; # Alias for the debuggit() function
         *Debuggit::add_func = sub {} unless Debuggit->can('add_func');
+    }
+
+    # User-defined Alias for the debuggit() function
+    if ( my $debuggit_alias = $opts{Alias} ) { 
+        *{ join('::', $caller_package, $debuggit_alias) } 
+            = sub { goto &{ join('::', $caller_package, 'debuggit') } } 
     }
 
 }   # End import()
@@ -215,14 +217,10 @@ sub _setup_funcs
     {
         *Debuggit::debuggit = eval $debuggit unless Debuggit->can('debuggit');
         *{ join('::', $caller_package, 'debuggit') } = \&debuggit;
-        *{ join('::', $caller_package, $debuggit_alias) } = \&debuggit
-            if $debuggit_alias; # Alias for the debuggit() function
     }
     else
     {
         *{ join('::', $caller_package, 'debuggit') } = eval $debuggit;
-        *{ join('::', $caller_package, $debuggit_alias) } = eval $debuggit
-            if $debuggit_alias; # Alias for the debuggit() function
     }
 
     unless (Debuggit->can('add_func'))
