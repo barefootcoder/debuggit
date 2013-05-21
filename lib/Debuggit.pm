@@ -110,7 +110,7 @@ This POD explains just the basics of using C<Debuggit>.  For full details, see L
 ####
 #################### main pod documentation end ###################
 
-my ($debuggit, $add_func);
+my ($debuggit, $add_func, $debuggit_alias);
 
 
 #####################################################################
@@ -144,11 +144,12 @@ Only L</debuggit> is exported.
 ##
 #####################################################################
 
-
 sub import
 {
     my ($pkg, %opts) = @_;
     my $caller_package = $opts{PolicyModule} ? caller(1) : caller;
+
+    my $debuggit_alias = $opts{Alias} if defined $opts{Alias};
 
     my $master_debug = eval "Debuggit::DEBUG()";
     my $debug_value = defined $opts{DEBUG} ? $opts{DEBUG} : defined $master_debug ? $master_debug : 0;
@@ -181,8 +182,11 @@ sub import
     {
         *{ join('::', $caller_package, 'debuggit') } = sub {};
         *Debuggit::add_func = sub {} unless Debuggit->can('add_func');
+        *{ join('::', $caller_package, $debuggit_alias) } = sub {} 
+            if $debuggit_alias; # Alias for the debuggit() function
     }
-}
+
+}   # End import()
 
 
 sub _setup_funcs
@@ -204,10 +208,14 @@ sub _setup_funcs
     {
         *Debuggit::debuggit = eval $debuggit unless Debuggit->can('debuggit');
         *{ join('::', $caller_package, 'debuggit') } = \&debuggit;
+        *{ join('::', $caller_package, $debuggit_alias) } = \&debuggit
+            if $debuggit_alias; # Alias for the debuggit() function
     }
     else
     {
         *{ join('::', $caller_package, 'debuggit') } = eval $debuggit;
+        *{ join('::', $caller_package, $debuggit_alias) } = eval $debuggit
+            if defined $debuggit_alias; # Alias for the debuggit() function
     }
 
     unless (Debuggit->can('add_func'))
