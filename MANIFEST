@@ -1,5 +1,4 @@
 Changes
-Debuggit-2.03_01.tar.gz
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
@@ -31,7 +30,6 @@ t/lib/TestCmd.pm
 t/lib/WithPod.pm
 t/lib/WithPodDebugOn.pm
 t/nocode.t
-t/nomem.t
 t/nomem1.t
 t/nomem2.t
 t/output.t
@@ -43,5 +41,5 @@ t/policy.t
 t/redefine.t
 t/set.t
 t/unset.t
-t/z0_pod.t
-t/z1_pod-coverage.t
+xt/z0_pod.t
+xt/z1_pod-coverage.t

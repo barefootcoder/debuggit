@@ -16,6 +16,7 @@ test_requires   'Test::Exception'       => '0.31';
 configure_requires 'YAML::Tiny'         => 0;
 
 githubmeta;
-jsonmeta;
 
+WriteAll;
+jsonmeta;
 WriteAll;
