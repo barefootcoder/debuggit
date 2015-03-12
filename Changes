@@ -5,6 +5,12 @@ Revision history for Perl module Debuggit
     - fix warnings in newer versions of Perl
         - thanks to ANDK for the patch
         - closes RT/90433
+    - test suite stuff:
+        - rename nomem1.t to nomem-old.t
+        - do a skip_all in all cases
+            - this avoids GTop failures on certain Perl versions
+        - rename nomem2.t to nomem.t
+        - Memory::Usage is now the official way to test we're not adding RAM
 
 2.05 Nov  5, 2013
     - more distro fixes:

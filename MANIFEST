@@ -30,8 +30,8 @@ t/lib/TestCmd.pm
 t/lib/WithPod.pm
 t/lib/WithPodDebugOn.pm
 t/nocode.t
-t/nomem1.t
-t/nomem2.t
+t/nomem-old.t
+t/nomem.t
 t/output.t
 t/override.t
 t/override_format.t
