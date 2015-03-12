@@ -154,7 +154,12 @@ sub import
     my $debug_value = defined $opts{DEBUG} ? $opts{DEBUG} : defined $master_debug ? $master_debug : 0;
     unless (defined $master_debug)
     {
-        *Debuggit::DEBUG = sub () { $debug_value };
+        # Perl does not know whether the string eval below will modify
+        # $debug_value, so it assumes the worst.  So make the constant
+        # out of a new lexical scalar outside the eval's visible scope.
+        # This quiets a new warning in 5.20.  Thanks ANDK!
+        my $inner_val = $debug_value;
+        *Debuggit::DEBUG = sub () { $inner_val };
         $master_debug = $debug_value;
     }
 
@@ -170,7 +175,8 @@ sub import
     {
         # Thanx to tye from perlmonks for this line of code, which solves the Pod::Coverage issue
         # (see t/pod_coverage.t).               http://www.perlmonks.org/?node_id=951831
-        *{ join('::', $caller_package, 'DEBUG') } = sub () { $debug_value };
+        my $inner_val = $debug_value; # See comment above about $inner_val.
+        *{ join('::', $caller_package, 'DEBUG') } = sub () { $inner_val };
     }
 
     if ($debug_value)

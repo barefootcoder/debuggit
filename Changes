@@ -1,12 +1,17 @@
 Revision history for Perl module Debuggit
 
 
+2.05_1 Mar 11, 2015
+    - fix warnings in newer versions of Perl
+        - thanks to ANDK for the patch
+        - closes RT/90433
+
 2.05 Nov  5, 2013
-	- more distro fixes:
-		- remove evil stuff that had crept into MANIFEST
-		- updated MANIFEST.SKIP to hopefully keep that from happening again
-		- moved POD tests to xt/ so they can't cause install failures
-		- fixed Makefile.PL to generate both META.yml *and* META.json
+    - more distro fixes:
+        - remove evil stuff that had crept into MANIFEST
+        - updated MANIFEST.SKIP to hopefully keep that from happening again
+        - moved POD tests to xt/ so they can't cause install failures
+        - fixed Makefile.PL to generate both META.yml *and* META.json
 
 2.04 Feb 15, 2013
     - added support for Data::Printer via a new config option
