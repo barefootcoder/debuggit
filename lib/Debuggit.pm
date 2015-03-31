@@ -3,7 +3,7 @@ package Debuggit;
 use strict;
 use warnings;
 
-our $VERSION = '2.05_1';
+our $VERSION = '2.06';
 
 
 #################### main pod documentation begin ###################
@@ -519,7 +519,7 @@ This program is free software licensed under
 The full text of the license can be found in the LICENSE file included with this module.
 
 
-This module is copyright (c) 2008-2013, Barefoot Software.  It has many venerable ancestors (some
+This module is copyright (c) 2008-2015, Barefoot Software.  It has many venerable ancestors (some
 more direct than others), including but not limited to:
 
 =over
