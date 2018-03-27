@@ -54,14 +54,14 @@ When you want more details on the nitty gritty of how C<Debuggit> actually works
 
 I know it's very fashionable to mark any module you put on CPAN for the first time as version
 0.000000001, and then take about eight years before daring to release a 1.0.  However, this module
-(in earlier incarnations) has been used in production code for over 10 years now, so I don't really
-think it makes much sense to call it 0.01.  I've chosen to start its CPAN life at 2.01, as this is
-its 3rd major rewrite.  If it makes you feel better, just subtract 2 from the version number and
-you'll get a fairly accurate idea of its "true" CPAN version.  Just be aware that it has had a
-pretty full life outside CPAN as well.
+(in earlier incarnations) was used in production code for over 10 years before I put it on CPAN, so
+I don't really think it makes much sense to call it 0.01.  I've chosen to start its CPAN life at
+2.01, as this is its 3rd major rewrite.  If it makes you feel better, just subtract 2 from the
+version number and you'll get a fairly accurate idea of its "true" CPAN version.  Just be aware that
+it has had a pretty full life outside CPAN as well.
 
 The Changes file details this life fairly accurately.  The version numbers are assigned using 20/20
-hindsight, and I've filled in a few gaps in historical notes, but all the dates and most of the
+hindsight, and I've filled in a few gaps in the historical notes, but all the dates and most of the
 commit messages are fully accurate, thanks to the wonders of version control.
 
 
@@ -574,12 +574,15 @@ curious statement:
     If you think you do, I would suggest you look into steering your logging
     behaviour via the category mechanism.
 
+(Actually, more recent versions of the module use a much softened rephrasing.  But this was the
+original.)
+
 No offense to Log4perl's author, but I always found this statement to be a bit ... well, snooty, to
 put it mildly.  My personal view is, who am I to say how many levels you need? or what you want to
 use them for?  Consequently, I have given you the range of positive integers to play with, and you
 can assign whatever meanings you like to them.  But with great power comes great responsibility, and
 if you don't define what your levels are I<somewhere> in your code, those who come after you will
-inevitably curse your name.
+inevitably curse your name (even if those are you).
 
 One last caution:  You may want to define constants for your debugging levels, like so:
 
@@ -634,10 +637,11 @@ This style, however:
 
     debuggit(2 => "here I am!");
 
-is slightly more problematic.  Unfortunately, without using a source filter (which is a possibility
+is slightly more problematic.  Unfortunately, without using a source munger (which is a possibility
 for a future version, although it would be strictly optional), there just isn't any way that I can
-see to eliminate that call.  (Unless maybe it could be done with something like C<Devel::Declare> or
-C<optimizer>, but I fear that may be beyond my meager Perl hacking ability ... patches welcome!)
+see to eliminate that call.  (I believe it would require something like L<Keyword::Declare> or
+L<Devel::Declare> or C<optimizer> or a (shudder) source filter, but I fear that may be beyond my
+meager Perl hacking ability ... patches welcome!)
 
 So if you prefer that second style (as does your humble author), then what you end up with is a
 guarantee that your C<debuggit> calls will resolve to calls to empty functions, which take a very
