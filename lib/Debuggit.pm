@@ -226,8 +226,9 @@ sub _setup_funcs
             add_func(DUMP => 1, sub
             {
                 require Data::Printer;
+                Data::Printer->VERSION("0.36");
                 shift;
-                return &Data::Printer::p(shift, colored => 1, hash_separator => ' => ', print_escapes => 1);
+                return &Data::Printer::np(shift, colored => 1, hash_separator => ' => ', print_escapes => 1);
             });
         }
         else

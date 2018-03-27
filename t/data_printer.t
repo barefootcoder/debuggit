@@ -30,7 +30,7 @@ my $cmd = <<'END';
     my $testhash = eval do { local $/; <IN> };
     close(IN);
 
-    print Data::Printer::p($testhash, colored => 1, hash_separator => " => ", print_escapes => 1);
+    print Data::Printer::np($testhash, colored => 1, hash_separator => " => ", print_escapes => 1);
 END
 
 # get dumped output without actually loading Data::Printer

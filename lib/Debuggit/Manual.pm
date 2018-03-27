@@ -361,16 +361,23 @@ Of course, maybe you don't like Data::Dumper.  Maybe you prefer the shiny new L<
     debuggit("my hash:", DUMP => \%my_hash);
 
 When you do this, it will send the single next argument (which means you have to use references as
-opposed to relying on Data::Printer's C<p()> prototype) to Data::Printer::p() instead of
+opposed to relying on Data::Printer's C<p()> prototype) to Data::Printer::np() instead of
 Data::Dumper::Dumper().  When it does so, it will use the following parameters:
 
     colored => 1, hash_separator => ' => ', print_escapes => 1
 
-because those are the parameters I like.  If you like different parameters, feel free to make your own version of C<DUMP> using C<add_func> (see below).
+because those are the parameters I like.  If you like different parameters, feel free to make your
+own version of C<DUMP> using C<add_func> (see below).
 
 This is the perfect sort of thing to add to a L<policy module|/"Policy Modules">.  There are some
-examples of just that in the
-L<cookbook|Debuggit::Cookbook/"Using Data::Printer instead of Data::Dumper">.
+examples of just that in the L<cookbook|Debuggit::Cookbook/"Using Data::Printer instead of
+Data::Dumper">.
+
+B<IMPORTANT NOTE!> Because of the breaking change introduced in Data::Printer 0.36, the current
+provided version triggered by C<< DataPrinter => 1 >> will only work on 0.36 or above (and versions
+of Debuggit prior to 2.07 only work with versions of Data::Printer I<below> 0.36).  If this is a
+problem, once again, create your own C<DUMP> via C<add_func> and you can do it however works for
+you.
 
 
 =head2 Adding new functions
