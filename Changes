@@ -1,6 +1,10 @@
 Revision history for Perl module Debuggit
 
 
+2.06_01 Mar 26, 2018
+    - update to work with Data::Printer 0.36 and above
+	- lots of misc POD tweaks
+
 2.06 Mar 31, 2015
     - fix warnings in newer versions of Perl
         - thanks to ANDK for the patch
