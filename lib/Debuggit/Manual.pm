@@ -34,7 +34,7 @@ You should read this documentation in 3 stages:
 
 =item *
 
-Start with the L</Quick Start> in the main L<Debuggit> POD.  After you get bored with how simple
+Start with the L<Debuggit/"Quick Start"> in the main L<Debuggit> POD.  After you get bored with how simple
 Debuggit is to use like that, you may want to explore more options.
 
 =item *
