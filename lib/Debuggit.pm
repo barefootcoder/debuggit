@@ -136,7 +136,13 @@ included modules.  See L<Debuggit::Manual/"The DEBUG Constant"> for full details
 
 =head2 Functions exported
 
-Only L</debuggit> is exported.
+The L</debuggit> function is exported. The Alias parameter can be used to provide a shorter alias for calling this function, for example:
+
+    use Debuggit Alias => 'dbg';  # The dbg() function is now an alias to debuggit()
+    # And then:
+    dbg("This message will be printed");
+
+The user is warned that the alias that they choose might conflict with other modules. More warning and advice are given in the L<Debuggit::Manual/"Creating an alias for the debuggit() function"> page.
 
 =cut
 
@@ -188,7 +194,14 @@ sub import
         *{ join('::', $caller_package, 'debuggit') } = sub {};
         *Debuggit::add_func = sub {} unless Debuggit->can('add_func');
     }
-}
+
+    # User-defined Alias for the debuggit() function
+    if ( my $debuggit_alias = $opts{Alias} ) { 
+        *{ join('::', $caller_package, $debuggit_alias) } 
+            = sub { goto &{ join('::', $caller_package, 'debuggit') } } 
+    }
+
+}   # End import()
 
 
 sub _setup_funcs

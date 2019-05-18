@@ -146,6 +146,18 @@ lot of flexibility has been built into it as well.  Read on to see how to adjust
 of C<debuggit>.
 
 
+=head2 Creating an alias for the debuggit function
+
+If you are feeling lazy, you can create an alias for the debuggit function. "debuggit" is not that long to type, but some of us are just very lazy... So here is how to do it:
+
+    use Debuggit Alias => 'dbg';  # The dbg() function is now an alias to debuggit()
+    # And then:
+    dbg("This message will be printed");
+
+The user is warned that the alias that they choose might conflict with other modules. If you call your debugging function "print" or "eval", expect some surpises: this module will not warn you if this happens.
+
+The smaller the alias, the more convenient it is but the more likely it is to create conflicts. That is why the name "debuggit" was chosen as a default. At least one user of this module uses the alias "dbg", because it's shorter. It's up to you.
+
 =head2 The basics
 
 =head4 debuggit([level =>] arg[, ...])
