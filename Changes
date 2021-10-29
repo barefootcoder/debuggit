@@ -270,7 +270,7 @@ Revision history for Perl module Debuggit
 
 0.02 Sep 12, 2001
     - added $debug_mode as a substitute for $debug
-    - left $debug in for backward compatibility, but noted that it was depracated
+    - left $debug in for backward compatibility, but noted that it was deprecated
 
 0.01 Dec 27, 2000
     - fixed dir to match new private CVS copies location
